@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 version="2.0">
+
+    <entity class="assignment.virtualmedicalhome.vmh.model.AppointmentEntity">
+        <table name="APPOINTMENT" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <attributes>
+            <id name="aId">
+                <column name="A_ID"/>
+            </id>
+            <basic name="aDateTime">
+                <column name="A_DATE_TIME"/>
+            </basic>
+            <basic name="duration">
+                <column name="DURATION"/>
+            </basic>
+            <basic name="timestamp">
+                <column name="TIMESTAMP"/>
+            </basic>
+            <basic name="doctorAccept">
+                <column name="DOCTOR_ACCEPT"/>
+            </basic>
+            <basic name="patientId">
+                <column name="PATIENT_ID"/>
+            </basic>
+            <basic name="iId">
+                <column name="I_ID"/>
+            </basic>
+            <basic name="doctorId">
+                <column name="DOCTOR_ID"/>
+            </basic>
+            <many-to-one name="personByPatientId" optional="true"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.PersonEntity">
+                <join-column name="PATIENT_ID" referenced-column-name="P_ID"/>
+            </many-to-one>
+            <many-to-one name="illnessByIId" optional="true"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.IllnessEntity">
+                <join-column name="I_ID" referenced-column-name="I_ID"/>
+            </many-to-one>
+            <many-to-one name="doctorByDoctorId" optional="true"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.DoctorEntity">
+                <join-column name="DOCTOR_ID" referenced-column-name="D_ID"/>
+            </many-to-one>
+            <one-to-many name="prescriptionsByAId" mapped-by="appointmentByAId"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.PrescriptionEntity"/>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.DoctorEntity">
+        <table name="DOCTOR" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <attributes>
+            <id name="dId">
+                <column name="D_ID"/>
+            </id>
+            <basic name="fees">
+                <column name="FEES"/>
+            </basic>
+            <one-to-many name="appointmentsByDId" mapped-by="doctorByDoctorId"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.AppointmentEntity"/>
+            <one-to-many name="doctorSpecialitiesByDId" mapped-by="doctorByDId"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.DoctorSpecialityEntity"/>
+            <one-to-one name="personByDId" optional="true"
+                        target-entity="assignment.virtualmedicalhome.vmh.model.PersonEntity">
+                <join-column name="D_ID" referenced-column-name="P_ID"/>
+            </one-to-one>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.DoctorSpecialityEntity">
+        <table name="DOCTOR_SPECIALITY" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <id-class class="assignment.virtualmedicalhome.vmh.model.DoctorSpecialityEntityPK"/>
+        <attributes>
+            <id name="spId">
+                <column name="SP_ID"/>
+            </id>
+            <id name="dId">
+                <column name="D_ID"/>
+            </id>
+            <many-to-one name="specializationBySpId" optional="true"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.SpecializationEntity">
+                <join-column name="SP_ID" referenced-column-name="SP_ID"/>
+            </many-to-one>
+            <many-to-one name="doctorByDId" optional="true"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.DoctorEntity">
+                <join-column name="D_ID" referenced-column-name="D_ID"/>
+            </many-to-one>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.IllnessEntity">
+        <table name="ILLNESS" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <attributes>
+            <id name="iId">
+                <column name="I_ID"/>
+            </id>
+            <basic name="title">
+                <column name="TITLE"/>
+            </basic>
+            <basic name="description">
+                <column name="DESCRIPTION"/>
+            </basic>
+            <one-to-many name="appointmentsByIId" mapped-by="illnessByIId"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.AppointmentEntity"/>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.LabTestsEntity">
+        <table name="LAB_TESTS" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <attributes>
+            <id name="ltId">
+                <column name="LT_ID"/>
+            </id>
+            <basic name="ltName">
+                <column name="LT_NAME"/>
+            </basic>
+            <one-to-many name="prescribedLabTestsByLtId" mapped-by="labTestsByLtId"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.PrescribedLabTestsEntity"/>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.MedicineEntity">
+        <table name="MEDICINE" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <attributes>
+            <id name="mId">
+                <column name="M_ID"/>
+            </id>
+            <basic name="mName">
+                <column name="M_NAME"/>
+            </basic>
+            <one-to-many name="prescribedMedicinesByMId" mapped-by="medicineByMId"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.PrescribedMedicineEntity"/>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.PersonEntity">
+        <table name="PERSON" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <attributes>
+            <id name="pId">
+                <column name="P_ID"/>
+            </id>
+            <basic name="pName">
+                <column name="P_NAME"/>
+            </basic>
+            <basic name="dob">
+                <column name="DOB"/>
+            </basic>
+            <basic name="phone">
+                <column name="PHONE"/>
+            </basic>
+            <basic name="email">
+                <column name="EMAIL"/>
+            </basic>
+            <basic name="password">
+                <column name="PASSWORD"/>
+            </basic>
+            <basic name="balance">
+                <column name="BALANCE"/>
+            </basic>
+            <basic name="address">
+                <column name="ADDRESS"/>
+            </basic>
+            <basic name="roleId">
+                <column name="ROLE_ID"/>
+            </basic>
+            <many-to-one name="roleByRoleId" optional="true"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.RoleEntity">
+                <join-column name="ROLE_ID" referenced-column-name="ROLE_ID"/>
+            </many-to-one>
+            <one-to-many name="appointmentsByPId" mapped-by="personByPatientId"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.AppointmentEntity"/>
+            <one-to-one name="doctorByPId" optional="true" mapped-by="personByDId"
+                        target-entity="assignment.virtualmedicalhome.vmh.model.DoctorEntity"/>
+            <one-to-one name="sessionByPId" optional="true" mapped-by="personByPId"
+                        target-entity="assignment.virtualmedicalhome.vmh.model.SessionEntity"/>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.PrescribedLabTestsEntity">
+        <table name="PRESCRIBED_LAB_TESTS" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <id-class class="assignment.virtualmedicalhome.vmh.model.PrescribedLabTestsEntityPK"/>
+        <attributes>
+            <id name="ltId">
+                <column name="LT_ID"/>
+            </id>
+            <id name="prescId">
+                <column name="PRESC_ID"/>
+            </id>
+            <many-to-one name="labTestsByLtId" optional="true"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.LabTestsEntity">
+                <join-column name="LT_ID" referenced-column-name="LT_ID"/>
+            </many-to-one>
+            <many-to-one name="prescriptionByPrescId" optional="true"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.PrescriptionEntity">
+                <join-column name="PRESC_ID" referenced-column-name="PRESC_ID"/>
+            </many-to-one>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.PrescribedMedicineEntity">
+        <table name="PRESCRIBED_MEDICINE" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <id-class class="assignment.virtualmedicalhome.vmh.model.PrescribedMedicineEntityPK"/>
+        <attributes>
+            <id name="mId">
+                <column name="M_ID"/>
+            </id>
+            <id name="prescId">
+                <column name="PRESC_ID"/>
+            </id>
+            <basic name="usage">
+                <column name="USAGE"/>
+            </basic>
+            <many-to-one name="medicineByMId" optional="true"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.MedicineEntity">
+                <join-column name="M_ID" referenced-column-name="M_ID"/>
+            </many-to-one>
+            <many-to-one name="prescriptionByPrescId" optional="true"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.PrescriptionEntity">
+                <join-column name="PRESC_ID" referenced-column-name="PRESC_ID"/>
+            </many-to-one>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.PrescriptionEntity">
+        <table name="PRESCRIPTION" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <attributes>
+            <id name="prescId">
+                <column name="PRESC_ID"/>
+            </id>
+            <basic name="description">
+                <column name="DESCRIPTION"/>
+            </basic>
+            <basic name="courseDuration">
+                <column name="COURSE_DURATION"/>
+            </basic>
+            <basic name="timestamp">
+                <column name="TIMESTAMP"/>
+            </basic>
+            <basic name="aId">
+                <column name="A_ID"/>
+            </basic>
+            <many-to-one name="appointmentByAId" optional="true"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.AppointmentEntity">
+                <join-column name="A_ID" referenced-column-name="A_ID"/>
+            </many-to-one>
+            <one-to-many name="prescribedLabTestsByPrescId" mapped-by="prescriptionByPrescId"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.PrescribedLabTestsEntity"/>
+            <one-to-many name="prescribedMedicinesByPrescId" mapped-by="prescriptionByPrescId"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.PrescribedMedicineEntity"/>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.RoleEntity">
+        <table name="ROLE" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <attributes>
+            <id name="roleId">
+                <column name="ROLE_ID"/>
+            </id>
+            <basic name="roleName">
+                <column name="ROLE_NAME"/>
+            </basic>
+            <one-to-many name="peopleByRoleId" mapped-by="roleByRoleId"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.PersonEntity"/>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.SessionEntity">
+        <table name="SESSION" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <attributes>
+            <id name="pId">
+                <column name="P_ID"/>
+            </id>
+            <basic name="sessionId">
+                <column name="SESSION_ID"/>
+            </basic>
+            <basic name="timestamp">
+                <column name="TIMESTAMP"/>
+            </basic>
+            <one-to-one name="personByPId" optional="true"
+                        target-entity="assignment.virtualmedicalhome.vmh.model.PersonEntity">
+                <join-column name="P_ID" referenced-column-name="P_ID"/>
+            </one-to-one>
+        </attributes>
+    </entity>
+    <entity class="assignment.virtualmedicalhome.vmh.model.SpecializationEntity">
+        <table name="SPECIALIZATION" schema="PUBLIC" catalog="VMHDB.DB"/>
+        <attributes>
+            <id name="spId">
+                <column name="SP_ID"/>
+            </id>
+            <basic name="speciality">
+                <column name="SPECIALITY"/>
+            </basic>
+            <one-to-many name="doctorSpecialitiesBySpId" mapped-by="specializationBySpId"
+                         target-entity="assignment.virtualmedicalhome.vmh.model.DoctorSpecialityEntity"/>
+        </attributes>
+    </entity>
+</entity-mappings>

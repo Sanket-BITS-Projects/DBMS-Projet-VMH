@@ -1,25 +1,11 @@
 package assignment.virtualmedicalhome.vmh.services;
 
-import assignment.virtualmedicalhome.vmh.model.Appointment;
-import assignment.virtualmedicalhome.vmh.model.DoctorCommission;
-import assignment.virtualmedicalhome.vmh.model.Person;
-import assignment.virtualmedicalhome.vmh.model.Prescription;
-import assignment.virtualmedicalhome.vmh.repository.DoctorCommissionRepository;
-import assignment.virtualmedicalhome.vmh.repository.IllnessRepository;
-import assignment.virtualmedicalhome.vmh.repository.PersonRepository;
-import assignment.virtualmedicalhome.vmh.repository.PrescriptionRepository;
-import assignment.virtualmedicalhome.vmh.response.DoctorAppointmentHistory;
 import org.springframework.stereotype.Service;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 @Service
 public class AppointmentService {
 
-    public List<DoctorAppointmentHistory> getHistoryFromAppointments(
+    /*public List<DoctorAppointmentHistory> getHistoryFromAppointments(
             Iterable<Appointment> appointments,
             PersonRepository repository,
             IllnessRepository illnessRepo,
@@ -57,5 +43,5 @@ public class AppointmentService {
             dummy.put("prescription", prescription.getDescription());
         }
         appointmentDetails.put(i, dummy);
-    }
+    }*/
 }

@@ -1,75 +1,45 @@
 package assignment.virtualmedicalhome.vmh.controller;
 
-import assignment.virtualmedicalhome.vmh.model.*;
-import assignment.virtualmedicalhome.vmh.repository.*;
-import assignment.virtualmedicalhome.vmh.response.*;
+import assignment.virtualmedicalhome.vmh.repository.AppointmentRepository;
+import assignment.virtualmedicalhome.vmh.repository.PersonRepository;
+import assignment.virtualmedicalhome.vmh.repository.RoleRepository;
+import assignment.virtualmedicalhome.vmh.repository.SessionRepository;
+import assignment.virtualmedicalhome.vmh.response.GenericResponse;
 import assignment.virtualmedicalhome.vmh.services.AppointmentService;
 import assignment.virtualmedicalhome.vmh.services.PersonService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.*;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
     private final PersonRepository repository;
+    private final SessionRepository authRepo;
     private final RoleRepository roleRepo;
-    private final AuthenticationRepository authRepo;
-    private final IllnessRepository illnessRepo;
     private final AppointmentRepository appointmentRepo;
-    private final DoctorRepository docRepo;
-    private final PrescriptionRepository presRepo;
-    private final DoctorCommissionRepository commissionRepo;
-    private final SpecializationRepository specialRepo;
     private final PersonService personService;
     private final AppointmentService appointmentService;
-    private final FeedbackRepository feedbackRepo;
-    private final WalletRepository walletRepo;
 
     public RestController(
             PersonRepository repository,
-            AuthenticationRepository authRepo,
-            RoleRepository roleRepo,
-            IllnessRepository illnessRepo,
+            SessionRepository authRepo,
             AppointmentRepository appointmentRepo,
-            DoctorRepository docRepo,
-            PrescriptionRepository presRepo,
-            DoctorCommissionRepository commissionRepo,
-            SpecializationRepository specialRepo,
             PersonService personService,
-            AppointmentService appointmentService,
-            FeedbackRepository feedbackRepo,
-
-            WalletRepository walletRepo) {
+            RoleRepository roleRepo,
+            AppointmentService appointmentService) {
         this.repository = repository;
         this.authRepo = authRepo;
-        this.roleRepo = roleRepo;
-        this.illnessRepo = illnessRepo;
         this.appointmentRepo = appointmentRepo;
-        this.docRepo = docRepo;
-        this.presRepo = presRepo;
-        this.commissionRepo = commissionRepo;
-        this.specialRepo = specialRepo;
         this.personService = personService;
+        this.roleRepo = roleRepo;
         this.appointmentService = appointmentService;
-        this.feedbackRepo = feedbackRepo;
-        this.walletRepo = walletRepo;
     }
 
-    @PostMapping("/SearchDoctor")
+    @GetMapping("/test")
+    public ResponseEntity<GenericResponse> test() {
+        return GenericResponse.getSuccessResponse("Good to go");
+    }
+
+    /*@PostMapping("/SearchDoctor")
     public ResponseEntity<GenericResponse> SearchDoctor(@CookieValue(name = "SESSION_ID", required = false) String sessionId,
                                                         @RequestParam String spName) {
         try {
@@ -598,9 +568,9 @@ public class RestController {
         HttpStatus status;
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            Role userRole = roleRepo.findByRoleName("USER");
+            RoleEntity userRole = roleRepo.findRoleEntityByRoleName("USER");
 
-            Person person = savePerson(name, email, phone, dob, userName, password, formatter, userRole);
+            PersonEntity person = savePerson(name, email, phone, dob, userName, password, formatter, userRole);
             return GenericResponse.getSuccessResponse(person);
         } catch (ParseException parseException) {
             error = "Unknown date format! Date format should be dd-MM-yyyy";
@@ -783,7 +753,7 @@ public class RestController {
                 error = "Insufficient data";
                 throw new IllegalArgumentException(error);
             }
-            Person person = repository.findByEmail(email);
+            PersonEntity person = repository.findByEmail(email);
             if (person == null) {
                 error = "Incorrect email or password";
                 throw new IllegalArgumentException(error);
@@ -875,5 +845,5 @@ public class RestController {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
         return GenericResponse.getSuccessResponse("Logout Successful");
-    }
+    }*/
 }

@@ -1,16 +1,13 @@
 package assignment.virtualmedicalhome.vmh.repository;
 
-import assignment.virtualmedicalhome.vmh.model.Person;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+
+import assignment.virtualmedicalhome.vmh.model.PersonEntity;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface PersonRepository extends CrudRepository<Person, Integer> {
-    Person findByEmail(String email);
+public interface PersonRepository extends CrudRepository<PersonEntity, Integer> {
+    /*Person findByEmail(String email);
 
     @Query(value = "select p from Person as p where p.role.roleId = 3")
     Iterable<Person> findAllDoctors();
@@ -33,5 +30,5 @@ public interface PersonRepository extends CrudRepository<Person, Integer> {
     @Modifying
     @Query(value = "update PeopleWallet set balance = :balance where personId = :id")
     @Transactional
-    void updateBalance(int id, int balance);
+    void updateBalance(int id, int balance);*/
 }

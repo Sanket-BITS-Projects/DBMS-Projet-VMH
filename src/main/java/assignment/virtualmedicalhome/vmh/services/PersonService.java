@@ -1,27 +1,19 @@
 package assignment.virtualmedicalhome.vmh.services;
 
 
-import assignment.virtualmedicalhome.vmh.model.*;
-import assignment.virtualmedicalhome.vmh.repository.*;
-import assignment.virtualmedicalhome.vmh.response.InvalidSessionException;
-import assignment.virtualmedicalhome.vmh.response.UnauthorizedException;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
 
 @Service
 public class PersonService {
-    private final PersonRepository personRepository;
-    private final AuthenticationRepository authRepo;
+   /* private final PersonRepository personRepository;
+    private final SessionRepository authRepo;
     private final PeopleWalletRepository peopleWalletRepository;
     private final DoctorRepository doctorRepository;
     private final DoctorCommissionRepository doctorCommissionRepository;
 
     public PersonService(
             PersonRepository personRepository,
-            AuthenticationRepository authRepo,
+            SessionRepository authRepo,
             PeopleWalletRepository peopleWalletRepository,
             DoctorRepository doctorRepository,
             DoctorCommissionRepository doctorCommissionRepository
@@ -59,7 +51,7 @@ public class PersonService {
 
 
     public Authentication getAuthentication(
-            AuthenticationRepository authRepo,
+            SessionRepository authRepo,
             String sessionId
     ) throws InvalidSessionException {
         if (sessionId == null) throw new InvalidSessionException();
@@ -108,5 +100,5 @@ public class PersonService {
             return person;
         }
         return null;
-    }
+    }*/
 }
