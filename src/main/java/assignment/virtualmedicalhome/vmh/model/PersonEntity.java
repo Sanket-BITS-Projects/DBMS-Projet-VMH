@@ -24,6 +24,25 @@ public class PersonEntity {
     private RoleEntity role;
     private SessionEntity session;
 
+
+    public  PersonEntity(){
+
+    }
+
+    public PersonEntity(int id, String name, String email, String phone, Date dob, String password,int balance , String address,int rId) {
+        this.pId = id;
+        this.pName = name;
+        this.email = email;
+        this.phone = phone;
+        this.dob = dob;
+        this.password = password;
+        this.balance = balance;
+        this.address = address;
+        this.roleId = rId;
+    }
+
+
+
     @Basic
     @Column(name = "P_NAME")
     public String getpName() {
@@ -55,6 +74,7 @@ public class PersonEntity {
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "P_ID")
     public int getpId() {
         return pId;
@@ -136,7 +156,9 @@ public class PersonEntity {
         return Objects.hash(pName, dob, phone, pId, email, password, balance, address, roleId);
     }
 
+
     @OneToMany(mappedBy = "patient")
+    @JsonIgnore
     public Collection<AppointmentEntity> getAppointmentsByPId() {
         return appointmentsByPId;
     }
@@ -146,6 +168,7 @@ public class PersonEntity {
     }
 
     @OneToOne(mappedBy = "personByDId")
+    @JsonIgnore
     public DoctorEntity getDoctorByPId() {
         return doctorByPId;
     }
@@ -157,6 +180,7 @@ public class PersonEntity {
     @ManyToOne
     @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID",
             insertable = false, updatable = false, nullable = false)
+    @JsonIgnore
     public RoleEntity getRole() {
         return role;
     }
@@ -166,6 +190,7 @@ public class PersonEntity {
     }
 
     @OneToOne(mappedBy = "person")
+    @JsonIgnore
     public SessionEntity getSession() {
         return session;
     }
