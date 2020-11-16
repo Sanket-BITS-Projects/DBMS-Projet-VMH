@@ -101,14 +101,18 @@ CREATE TABLE Person
 
 INSERT INTO PERSON(P_NAME, DOB, PHONE, EMAIL, PASSWORD, ADDRESS, ROLE_ID)
 VALUES ('ADMIN', '1990-01-01', '9876543210', 'admin@email.com', 'password', 'Sample Address', 1);
+INSERT INTO PERSON(P_NAME, DOB, PHONE, EMAIL, PASSWORD, ADDRESS, ROLE_ID)
+VALUES ('Abc xyz', '1990-01-01', '9876543210', 'abcxyz@email.com', 'password', 'Sample Address', 3);
+INSERT INTO PERSON(P_NAME, DOB, PHONE, EMAIL, PASSWORD, ADDRESS, ROLE_ID)
+VALUES ('Xyz', '1990-01-01', '9876543210', 'xyz@email.com', 'password', 'Sample Address', 3);
 
 CREATE TABLE Session
 (
     session_id VARCHAR(255) NOT NULL,
-    timestamp DATE NOT NULL,
-    p_id INT NOT NULL,
+    timestamp  DATE         NOT NULL,
+    p_id       INT          NOT NULL,
     PRIMARY KEY (p_id),
-    FOREIGN KEY (p_id) REFERENCES Person(p_id),
+    FOREIGN KEY (p_id) REFERENCES Person (p_id),
     UNIQUE (session_id)
 );
 
@@ -117,8 +121,24 @@ CREATE TABLE Doctor
     fees INT NOT NULL,
     d_id INT NOT NULL,
     PRIMARY KEY (d_id),
-    FOREIGN KEY (d_id) REFERENCES Person(p_id)
+    FOREIGN KEY (d_id) REFERENCES Person (p_id)
 );
+
+INSERT INTO PERSON(P_NAME, DOB, PHONE, EMAIL, PASSWORD, ADDRESS, ROLE_ID)
+VALUES ('Dr. Ramesh', '1990-05-11', '9876543210', 'dr.ramesh@email.com', 'password', 'Dummy Address', 2);
+INSERT INTO DOCTOR(FEES, D_ID)
+VALUES (300, SELECT P_ID FROM PERSON WHERE email = 'dr.ramesh@email.com');
+INSERT INTO DOCTOR_SPECIALITY(SP_ID, D_ID)
+VALUES (SELECT SP_ID FROM SPECIALIZATION WHERE speciality = 'Physician',
+        SELECT P_ID FROM PERSON WHERE email = 'dr.ramesh@email.com');
+
+INSERT INTO PERSON(P_NAME, DOB, PHONE, EMAIL, PASSWORD, ADDRESS, ROLE_ID)
+VALUES ('Dr. Abhishek', '1999-05-16', '9876543210', 'dr.abhishek@email.com', 'password', 'Dummy Address', 2);
+INSERT INTO DOCTOR(FEES, D_ID)
+VALUES (500, SELECT P_ID FROM PERSON WHERE email = 'dr.abhishek@email.com');
+INSERT INTO DOCTOR_SPECIALITY(SP_ID, D_ID)
+VALUES (SELECT SP_ID FROM SPECIALIZATION WHERE speciality = 'Physician',
+        SELECT P_ID FROM PERSON WHERE email = 'dr.abhishek@email.com');
 
 CREATE TABLE Appointment
 (
@@ -151,27 +171,27 @@ CREATE TABLE Prescription
 CREATE TABLE Doctor_Speciality
 (
     sp_id INT NOT NULL,
-    d_id INT NOT NULL,
+    d_id  INT NOT NULL,
     PRIMARY KEY (sp_id, d_id),
-    FOREIGN KEY (sp_id) REFERENCES Specialization(sp_id),
-    FOREIGN KEY (d_id) REFERENCES Doctor(d_id)
+    FOREIGN KEY (sp_id) REFERENCES Specialization (sp_id),
+    FOREIGN KEY (d_id) REFERENCES Doctor (d_id)
 );
 
 CREATE TABLE Prescribed_Medicine
 (
-    usage VARCHAR(255) NOT NULL,
-    m_id INT NOT NULL,
-    presc_id INT NOT NULL,
+    usage    VARCHAR(255) NOT NULL,
+    m_id     INT          NOT NULL,
+    presc_id INT          NOT NULL,
     PRIMARY KEY (m_id, presc_id),
-    FOREIGN KEY (m_id) REFERENCES Medicine(m_id),
-    FOREIGN KEY (presc_id) REFERENCES Prescription(presc_id)
+    FOREIGN KEY (m_id) REFERENCES Medicine (m_id),
+    FOREIGN KEY (presc_id) REFERENCES Prescription (presc_id)
 );
 
 CREATE TABLE Prescribed_Lab_Tests
 (
-    lt_id INT NOT NULL,
+    lt_id    INT NOT NULL,
     presc_id INT NOT NULL,
     PRIMARY KEY (lt_id, presc_id),
-    FOREIGN KEY (lt_id) REFERENCES Lab_Tests(lt_id),
-    FOREIGN KEY (presc_id) REFERENCES Prescription(presc_id)
+    FOREIGN KEY (lt_id) REFERENCES Lab_Tests (lt_id),
+    FOREIGN KEY (presc_id) REFERENCES Prescription (presc_id)
 );

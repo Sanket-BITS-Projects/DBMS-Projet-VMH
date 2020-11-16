@@ -4,7 +4,9 @@ import assignment.virtualmedicalhome.vmh.model.SessionEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface SessionRepository extends CrudRepository<SessionEntity, Integer> {
-    SessionEntity getAuthenticationBySessionId(String sessionId);
+    Optional<SessionEntity> getSessionEntityBySessionId(String sessionId);
 }

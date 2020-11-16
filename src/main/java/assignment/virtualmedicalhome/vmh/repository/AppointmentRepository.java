@@ -4,10 +4,12 @@ import assignment.virtualmedicalhome.vmh.model.AppointmentEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
 
+@Repository
 public interface AppointmentRepository extends CrudRepository<AppointmentEntity, Integer> {
     @Query(value = "select a from AppointmentEntity as a where a.patientId = :patient and a.doctorAccept = 1 and a.timestamp < :endDate")
     Iterable<AppointmentEntity> findAppointmentByPatientTillDate(int patient, Date endDate);
