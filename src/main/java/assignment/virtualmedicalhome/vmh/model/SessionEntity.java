@@ -58,7 +58,7 @@ public class SessionEntity {
     }
 
     @OneToOne
-    @JoinColumn(name = "P_ID", referencedColumnName = "P_ID", nullable = false)
+    @JoinColumn(name = "P_ID", referencedColumnName = "P_ID", nullable = false, updatable = false, insertable = false)
     public PersonEntity getPerson() {
         return person;
     }

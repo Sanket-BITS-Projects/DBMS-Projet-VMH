@@ -146,6 +146,7 @@ public class PersonEntity {
     }
 
     @OneToOne(mappedBy = "personByDId")
+    @JsonIgnore
     public DoctorEntity getDoctorByPId() {
         return doctorByPId;
     }
@@ -166,6 +167,7 @@ public class PersonEntity {
     }
 
     @OneToOne(mappedBy = "person")
+    @JsonIgnore
     public SessionEntity getSession() {
         return session;
     }

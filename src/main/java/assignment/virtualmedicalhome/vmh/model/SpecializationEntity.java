@@ -1,5 +1,7 @@
 package assignment.virtualmedicalhome.vmh.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
@@ -45,6 +47,7 @@ public class SpecializationEntity {
         return Objects.hash(spId, speciality);
     }
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "specializations")
     public Collection<DoctorEntity> getDoctorsBySpId() {
         return doctorsBySpId;
