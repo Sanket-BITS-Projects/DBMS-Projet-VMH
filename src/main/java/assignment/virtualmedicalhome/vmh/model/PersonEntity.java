@@ -1,12 +1,14 @@
 package assignment.virtualmedicalhome.vmh.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "PERSON", schema = "PUBLIC", catalog = "VMHDB.DB")
+@Table(name = "PERSON")
 public class PersonEntity {
     private String pName;
     private Date dob;
@@ -19,8 +21,8 @@ public class PersonEntity {
     private int roleId;
     private Collection<AppointmentEntity> appointmentsByPId;
     private DoctorEntity doctorByPId;
-    private RoleEntity roleByRoleId;
-    private SessionEntity sessionByPId;
+    private RoleEntity role;
+    private SessionEntity session;
 
     @Basic
     @Column(name = "P_NAME")
@@ -73,6 +75,7 @@ public class PersonEntity {
     }
 
     @Basic
+    @JsonIgnore
     @Column(name = "PASSWORD")
     public String getPassword() {
         return password;
@@ -154,20 +157,20 @@ public class PersonEntity {
     @ManyToOne
     @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID",
             insertable = false, updatable = false, nullable = false)
-    public RoleEntity getRoleByRoleId() {
-        return roleByRoleId;
+    public RoleEntity getRole() {
+        return role;
     }
 
-    public void setRoleByRoleId(RoleEntity roleByRoleId) {
-        this.roleByRoleId = roleByRoleId;
+    public void setRole(RoleEntity roleByRoleId) {
+        this.role = roleByRoleId;
     }
 
-    @OneToOne(mappedBy = "personByPId")
-    public SessionEntity getSessionByPId() {
-        return sessionByPId;
+    @OneToOne(mappedBy = "person")
+    public SessionEntity getSession() {
+        return session;
     }
 
-    public void setSessionByPId(SessionEntity sessionByPId) {
-        this.sessionByPId = sessionByPId;
+    public void setSession(SessionEntity session) {
+        this.session = session;
     }
 }

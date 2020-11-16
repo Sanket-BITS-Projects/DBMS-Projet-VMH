@@ -1,53 +1,106 @@
+DROP TABLE IF EXISTS SESSION, PRESCRIBED_LAB_TESTS, PRESCRIBED_MEDICINE, PRESCRIPTION, APPOINTMENT,
+    DOCTOR_SPECIALITY, DOCTOR, ROLE, MEDICINE, LAB_TESTS, ILLNESS, SPECIALIZATION, PERSON CASCADE;
+
 CREATE TABLE Role
 (
     role_name VARCHAR(10) NOT NULL,
-    role_id INT NOT NULL,
+    role_id   INT AUTO_INCREMENT,
     PRIMARY KEY (role_id)
 );
 
+INSERT INTO Role(ROLE_NAME)
+VALUES ('ADMIN');
+INSERT INTO Role(ROLE_NAME)
+VALUES ('DOCTOR');
+INSERT INTO Role(ROLE_NAME)
+VALUES ('USER');
+
 CREATE TABLE Specialization
 (
-    sp_id INT NOT NULL,
+    sp_id      INT AUTO_INCREMENT,
     speciality VARCHAR(50) NOT NULL,
     PRIMARY KEY (sp_id)
 );
 
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Physician');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Pediatrician');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Gynecologist');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Surgeon');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Psychiatrist');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Cardiologist');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Dermatologist');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Endocrinologist');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Gastroenterologist');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Neurologist');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Anesthesiologist');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Orthopedist');
+INSERT INTO Specialization(SPECIALITY)
+VALUES ('Radiologist');
+
 CREATE TABLE Medicine
 (
-    m_id INT NOT NULL,
+    m_id   INT AUTO_INCREMENT,
     m_name VARCHAR(50) NOT NULL,
     PRIMARY KEY (m_id)
 );
 
 CREATE TABLE Lab_Tests
 (
-    lt_id INT NOT NULL,
+    lt_id   INT AUTO_INCREMENT,
     lt_name VARCHAR(30) NOT NULL,
     PRIMARY KEY (lt_id)
 );
 
+INSERT INTO Lab_Tests(LT_NAME)
+VALUES ('Complete Blood Count');
+INSERT INTO Lab_Tests(LT_NAME)
+VALUES ('Basic Metabolic Panel');
+INSERT INTO Lab_Tests(LT_NAME)
+VALUES ('Lipid Panel');
+INSERT INTO Lab_Tests(LT_NAME)
+VALUES ('Liver Panel');
+INSERT INTO Lab_Tests(LT_NAME)
+VALUES ('Urinalysis');
+INSERT INTO Lab_Tests(LT_NAME)
+VALUES ('MRI');
+
 CREATE TABLE Illness
 (
-    i_id INT NOT NULL,
-    title VARCHAR(30) NOT NULL,
+    i_id        INT AUTO_INCREMENT,
+    title       VARCHAR(30)  NOT NULL,
     description VARCHAR(255) NOT NULL,
     PRIMARY KEY (i_id)
 );
 
 CREATE TABLE Person
 (
-    p_name VARCHAR(50) NOT NULL,
-    dob DATE NOT NULL,
-    phone VARCHAR(10) NOT NULL,
-    p_id INT NOT NULL,
-    email VARCHAR(320) NOT NULL,
+    p_name   VARCHAR(50)  NOT NULL,
+    dob      DATE         NOT NULL,
+    phone    VARCHAR(10)  NOT NULL,
+    p_id     INT AUTO_INCREMENT,
+    email    VARCHAR(320) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    balance INT NOT NULL,
-    address VARCHAR(255) NOT NULL,
-    role_id INT NOT NULL,
+    balance  INT DEFAULT 2000,
+    address  VARCHAR(255) NOT NULL,
+    role_id  INT          NOT NULL,
     PRIMARY KEY (p_id),
-    FOREIGN KEY (role_id) REFERENCES Role(role_id)
+    FOREIGN KEY (role_id) REFERENCES Role (role_id)
 );
+
+INSERT INTO PERSON(P_NAME, DOB, PHONE, EMAIL, PASSWORD, ADDRESS, ROLE_ID)
+VALUES ('ADMIN', '1990-01-01', '9876543210', 'admin@email.com', 'password', 'Sample Address', 1);
 
 CREATE TABLE Session
 (
@@ -69,29 +122,29 @@ CREATE TABLE Doctor
 
 CREATE TABLE Appointment
 (
-    a_id INT NOT NULL,
-    a_date_time DATE NOT NULL,
-    duration INT NOT NULL,
-    timestamp DATE NOT NULL,
-    doctor_accept CHAR(1) NOT NULL,
-    patient_id INT NOT NULL,
-    i_id INT NOT NULL,
-    doctor_id INT NOT NULL,
+    a_id          INT AUTO_INCREMENT,
+    a_date_time   DATE NOT NULL,
+    duration      INT     DEFAULT 15,
+    timestamp     DATE NOT NULL,
+    doctor_accept CHAR(1) DEFAULT '0',
+    patient_id    INT  NOT NULL,
+    i_id          INT  NOT NULL,
+    doctor_id     INT  NOT NULL,
     PRIMARY KEY (a_id),
-    FOREIGN KEY (patient_id) REFERENCES Person(p_id),
-    FOREIGN KEY (i_id) REFERENCES Illness(i_id),
-    FOREIGN KEY (doctor_id) REFERENCES Doctor(d_id)
+    FOREIGN KEY (patient_id) REFERENCES Person (p_id),
+    FOREIGN KEY (i_id) REFERENCES Illness (i_id),
+    FOREIGN KEY (doctor_id) REFERENCES Doctor (d_id)
 );
 
 CREATE TABLE Prescription
 (
-    description VARCHAR(255) NOT NULL,
-    course_duration INT NOT NULL,
-    timestamp DATE NOT NULL,
-    presc_id INT NOT NULL,
-    a_id INT NOT NULL,
+    description     VARCHAR(255) NOT NULL,
+    course_duration INT          NOT NULL,
+    timestamp       DATE         NOT NULL,
+    presc_id        INT AUTO_INCREMENT,
+    a_id            INT          NOT NULL,
     PRIMARY KEY (presc_id),
-    FOREIGN KEY (a_id) REFERENCES Appointment(a_id),
+    FOREIGN KEY (a_id) REFERENCES Appointment (a_id),
     UNIQUE (a_id)
 );
 

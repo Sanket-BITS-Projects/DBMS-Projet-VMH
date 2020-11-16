@@ -1,16 +1,16 @@
 package assignment.virtualmedicalhome.vmh.model;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "SESSION", schema = "PUBLIC", catalog = "VMHDB.DB")
+@Table(name = "SESSION")
 public class SessionEntity {
     private String sessionId;
     private Date timestamp;
     private int pId;
-    private PersonEntity personByPId;
+    private PersonEntity person;
 
     @Basic
     @Column(name = "SESSION_ID")
@@ -59,11 +59,11 @@ public class SessionEntity {
 
     @OneToOne
     @JoinColumn(name = "P_ID", referencedColumnName = "P_ID", nullable = false)
-    public PersonEntity getPersonByPId() {
-        return personByPId;
+    public PersonEntity getPerson() {
+        return person;
     }
 
-    public void setPersonByPId(PersonEntity personByPId) {
-        this.personByPId = personByPId;
+    public void setPerson(PersonEntity person) {
+        this.person = person;
     }
 }

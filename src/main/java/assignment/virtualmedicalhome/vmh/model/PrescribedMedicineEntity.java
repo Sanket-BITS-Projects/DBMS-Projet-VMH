@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "PRESCRIBED_MEDICINE", schema = "PUBLIC", catalog = "VMHDB.DB")
+@Table(name = "PRESCRIBED_MEDICINE")
 //@IdClass(PrescribedMedicineEntityPK.class)
 public class PrescribedMedicineEntity implements Serializable {
     private String usage;

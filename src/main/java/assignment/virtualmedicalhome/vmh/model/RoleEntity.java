@@ -1,11 +1,13 @@
 package assignment.virtualmedicalhome.vmh.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "ROLE", schema = "PUBLIC", catalog = "VMHDB.DB")
+@Table(name = "ROLE")
 public class RoleEntity {
     private String roleName;
     private int roleId;
@@ -45,7 +47,8 @@ public class RoleEntity {
         return Objects.hash(roleName, roleId);
     }
 
-    @OneToMany(mappedBy = "roleByRoleId")
+    @JsonIgnore
+    @OneToMany(mappedBy = "role")
     public Collection<PersonEntity> getPeopleByRoleId() {
         return peopleByRoleId;
     }

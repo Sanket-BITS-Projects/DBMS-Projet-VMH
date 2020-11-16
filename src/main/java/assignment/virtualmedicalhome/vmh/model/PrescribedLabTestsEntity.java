@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "PRESCRIBED_LAB_TESTS", schema = "PUBLIC", catalog = "VMHDB.DB")
+@Table(name = "PRESCRIBED_LAB_TESTS")
 public class PrescribedLabTestsEntity implements Serializable {
     private int ltId;
     private int prescId;

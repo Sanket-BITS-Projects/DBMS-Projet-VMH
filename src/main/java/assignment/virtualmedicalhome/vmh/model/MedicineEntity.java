@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "MEDICINE", schema = "PUBLIC", catalog = "VMHDB.DB")
+@Table(name = "MEDICINE")
 public class MedicineEntity {
     private int mId;
     private String mName;

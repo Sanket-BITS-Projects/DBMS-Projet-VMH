@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PersonRepository extends CrudRepository<PersonEntity, Integer> {
-    /*Person findByEmail(String email);
+    PersonEntity findByEmail(String email);
 
-    @Query(value = "select p from Person as p where p.role.roleId = 3")
+    /*@Query(value = "select p from Person as p where p.role.roleId = 3")
     Iterable<Person> findAllDoctors();
 
     @Query(value = "select p from Person as p where p.role.roleId = 1")

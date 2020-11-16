@@ -1,5 +1,8 @@
 package assignment.virtualmedicalhome.vmh.controller;
 
+import assignment.virtualmedicalhome.vmh.model.PersonEntity;
+import assignment.virtualmedicalhome.vmh.model.RoleEntity;
+import assignment.virtualmedicalhome.vmh.model.SessionEntity;
 import assignment.virtualmedicalhome.vmh.repository.AppointmentRepository;
 import assignment.virtualmedicalhome.vmh.repository.PersonRepository;
 import assignment.virtualmedicalhome.vmh.repository.RoleRepository;
@@ -7,8 +10,19 @@ import assignment.virtualmedicalhome.vmh.repository.SessionRepository;
 import assignment.virtualmedicalhome.vmh.response.GenericResponse;
 import assignment.virtualmedicalhome.vmh.services.AppointmentService;
 import assignment.virtualmedicalhome.vmh.services.PersonService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
 
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
@@ -738,7 +752,7 @@ public class RestController {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-    }
+    }*/
 
     @PostMapping("/login")
     public ResponseEntity<GenericResponse> login(
@@ -758,12 +772,11 @@ public class RestController {
                 error = "Incorrect email or password";
                 throw new IllegalArgumentException(error);
             } else {
-                Authentication authentication = authRepo.findById(person.getId()).orElseThrow(IllegalStateException::new);
-                if (!authentication.getPassword().equals(password)) {
+                if (!person.getPassword().equals(password)) {
                     error = "Incorrect email or password";
                     throw new IllegalArgumentException(error);
                 }
-                String fullString = person.getId() + person.getEmail() + System.nanoTime();
+                String fullString = person.getpId() + person.getEmail() + System.nanoTime();
                 String sessionId = Base64.getEncoder().encodeToString(
                         MessageDigest.getInstance("MD5").digest(fullString.getBytes())
                 );
@@ -773,13 +786,14 @@ public class RestController {
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.MINUTE, 30);
                 Date expiryDate = calendar.getTime();
-                authentication.setSessionId(sessionId);
-                authentication.setSessionEnd(expiryDate);
-                authRepo.save(authentication);
-                authentication.setPassword(null);
+                SessionEntity session = new SessionEntity();
+                session.setpId(person.getpId());
+                session.setSessionId(sessionId);
+                session.setTimestamp(expiryDate);
+                authRepo.save(session);
                 return GenericResponse.getSuccessResponse(new Object() {
-                    public final Authentication auth = authentication;
-                    public final Role role = person.getRole();
+                    public final SessionEntity auth = session;
+                    public final RoleEntity role = person.getRole();
                 });
             }
         } catch (NoSuchAlgorithmException e) {
@@ -795,7 +809,7 @@ public class RestController {
         return GenericResponse.getFailureResponse(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @RequestMapping("giveFeedback")
+    /*@RequestMapping("giveFeedback")
     public ResponseEntity<GenericResponse> giveFeedback(
             @CookieValue("SESSION_ID") String sessionId,
             @RequestParam int appointmentId,

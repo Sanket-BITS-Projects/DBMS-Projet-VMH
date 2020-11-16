@@ -1,12 +1,12 @@
 package assignment.virtualmedicalhome.vmh.model;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "PRESCRIPTION", schema = "PUBLIC", catalog = "VMHDB.DB")
+@Table(name = "PRESCRIPTION")
 public class PrescriptionEntity {
     private String description;
     private int courseDuration;

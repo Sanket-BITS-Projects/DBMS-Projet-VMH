@@ -1,11 +1,11 @@
 package assignment.virtualmedicalhome.vmh.model;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "APPOINTMENT", schema = "PUBLIC", catalog = "VMHDB.DB")
+@Table(name = "APPOINTMENT")
 public class AppointmentEntity {
     private int aId;
     private Date aDateTime;
