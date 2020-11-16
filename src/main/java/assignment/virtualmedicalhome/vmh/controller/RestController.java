@@ -1,15 +1,14 @@
 package assignment.virtualmedicalhome.vmh.controller;
 
-import assignment.virtualmedicalhome.vmh.model.DoctorEntity;
-import assignment.virtualmedicalhome.vmh.model.PersonEntity;
-import assignment.virtualmedicalhome.vmh.model.SessionEntity;
-import assignment.virtualmedicalhome.vmh.model.SpecializationEntity;
+import assignment.virtualmedicalhome.vmh.model.*;
 import assignment.virtualmedicalhome.vmh.repository.*;
 import assignment.virtualmedicalhome.vmh.response.GenericResponse;
 import assignment.virtualmedicalhome.vmh.response.InvalidSessionException;
 import assignment.virtualmedicalhome.vmh.response.UnauthorizedException;
 import assignment.virtualmedicalhome.vmh.services.AppointmentService;
 import assignment.virtualmedicalhome.vmh.services.PersonService;
+import jdk.nashorn.internal.runtime.Specialization;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,10 +31,11 @@ public class RestController {
     private final PersonRepository repository;
     private final SessionRepository authRepo;
     private final RoleRepository roleRepo;
-    private final SpecializationRepository specialRepo;
     private final AppointmentRepository appointmentRepo;
     private final PersonService personService;
     private final AppointmentService appointmentService;
+    private final SpecializationRepository specialRepo;
+    private final DoctorRepository docRepo;
 
     public RestController(
             PersonRepository repository,
@@ -40,8 +43,9 @@ public class RestController {
             AppointmentRepository appointmentRepo,
             PersonService personService,
             RoleRepository roleRepo,
+            AppointmentService appointmentService,
             SpecializationRepository specialRepo,
-            AppointmentService appointmentService) {
+            DoctorRepository docRepo) {
         this.repository = repository;
         this.authRepo = authRepo;
         this.appointmentRepo = appointmentRepo;
@@ -49,6 +53,7 @@ public class RestController {
         this.roleRepo = roleRepo;
         this.specialRepo = specialRepo;
         this.appointmentService = appointmentService;
+        this.docRepo = docRepo;
     }
 
     @GetMapping("/test")
@@ -695,6 +700,100 @@ public class RestController {
             );
         }
     }*/
+
+
+    @PostMapping("/signUpUser")
+    public ResponseEntity<GenericResponse> signUp(
+            @RequestParam String name,
+            @RequestParam String email,
+            @RequestParam String phone,
+            @RequestParam String dob,
+            @RequestParam String address,
+            @RequestParam String password
+    ) {
+        String error;
+        HttpStatus status;
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            RoleEntity userRole = roleRepo.findRoleEntityByRoleName("USER");
+            PersonEntity person = savePerson(name, email, phone, dob, password, address,formatter,userRole);
+            return GenericResponse.getSuccessResponse(person);
+        } catch (ParseException parseException) {
+            error = "Unknown date format! Date format should be dd-MM-yyyy";
+            status = HttpStatus.BAD_REQUEST;
+            parseException.printStackTrace();
+        } catch (UnsupportedOperationException e) {
+            error = e.getMessage();
+            status = HttpStatus.BAD_REQUEST;
+            e.printStackTrace();
+        } catch (Exception e) {
+            error = "Could not create account! Please contact admin";
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            e.printStackTrace();
+        }
+        return GenericResponse.getFailureResponse(error, status);
+    }
+
+    private PersonEntity savePerson(@RequestParam String name, @RequestParam String email, @RequestParam String phone, @RequestParam String dob, @RequestParam String password,@RequestParam String address, SimpleDateFormat formatter,RoleEntity userRole) throws ParseException {
+        if (repository.findByEmail(email) != null) {
+            throw new UnsupportedOperationException("User with email id already exists!");
+        }
+        PersonEntity person = new PersonEntity(0, name, email, phone, formatter.parse(dob),password,2000,address,userRole.getRoleId());
+         return repository.save(person);
+
+    }
+
+
+    @PostMapping("/signUpDoctor")
+    public ResponseEntity<GenericResponse> signUpDoctor(
+            @RequestParam String name,
+            @RequestParam String email,
+            @RequestParam String phone,
+            @RequestParam String dob,
+            @RequestParam String address,
+            @RequestParam int specializationId,
+            @RequestParam int doctorFees,
+            @RequestParam String password
+    ) {
+        String error;
+        HttpStatus status;
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            RoleEntity userRole = roleRepo.findRoleEntityByRoleName("DOCTOR");
+            PersonEntity person = savePerson(name, email, phone, dob, password, address,formatter,userRole);
+            SpecializationEntity specialization = specialRepo.findById(specializationId).orElse(null);
+            if (specialization == null) {
+                throw new IllegalArgumentException("Specialization not found with id " + specializationId);
+            }
+            DoctorEntity doctor = new DoctorEntity();
+            doctor.setdId(person.getpId());
+            doctor.setFees(doctorFees);
+            ArrayList<SpecializationEntity> arrayspecialization = new ArrayList<>();
+            arrayspecialization.add(specialization);
+            doctor.setSpecializations(arrayspecialization);
+            DoctorEntity finaldoctor = docRepo.save(doctor);
+            finaldoctor.setPersonByDId(person);
+            return GenericResponse.getSuccessResponse(new Object(){
+                public final DoctorEntity doctor = finaldoctor;
+
+            });
+        } catch (ParseException parseException) {
+            error = "Unknown date format! Date format should be dd-MM-yyyy";
+            status = HttpStatus.BAD_REQUEST;
+            parseException.printStackTrace();
+        } catch (UnsupportedOperationException e) {
+            error = e.getMessage();
+            status = HttpStatus.BAD_REQUEST;
+            e.printStackTrace();
+        } catch (Exception e) {
+            error = "Could not create account! Please contact admin";
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            e.printStackTrace();
+        }
+        return GenericResponse.getFailureResponse(error, status);
+    }
+
+
 
     @PostMapping("/login")
     public ResponseEntity<GenericResponse> login(HttpServletRequest request, HttpServletResponse response) {

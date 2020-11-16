@@ -33,8 +33,6 @@
                     <input type="submit" class="button" value="Sign In" onclick="loginuser()">
                 </div>
             </div>
-
-
              <div class="sign-up-htm">
                 <div class="group">
                     <label for="username" class="label" required>name</label>
@@ -56,7 +54,12 @@
                      <input  type="date"  class="input" name="dob" id="dob">
                      <small class="small_message">Error Message</small>
                  </div>
-                <div class="group">
+                 <div class="group">
+                     <label for="pass" class="label">Address</label>
+                     <input  type="text" class="input" id="Address">
+                     <small class="small_message">Error Message</small>
+                 </div>
+                  <div class="group">
                     <label for="pass" class="label">Password</label>
                     <input  name="password" type="password" class="input" data-type="password" id="password">
                     <small class="small_message">Error Message</small>

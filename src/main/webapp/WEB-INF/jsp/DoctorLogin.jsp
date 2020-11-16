@@ -52,6 +52,11 @@
                     <small class="small_message">Error Message</small>
                 </div>
                 <div class="group">
+                    <label for="pass" class="label">Address</label>
+                    <input  type="text" class="input" id="Address">
+                    <small class="small_message">Error Message</small>
+                </div>
+                <div class="group">
                     <label class="label">Specialization</label>
                     <select  id="specialization" class="input">
                             <option value=1 class = "option">Physician</option>
@@ -71,8 +76,8 @@
                     <small class="small_message">Error Message</small>
                 </div>
                 <div class="group">
-                    <label for="pass" class="label">Service-Start-Date</label>
-                    <input id="ssd" type="date" class="input">
+                    <label for="pass" class="label">Fees</label>
+                    <input id="fees" type="text" class="input">
                     <small class="small_message">Error Message</small>
                 </div>
                 <div class="group">
