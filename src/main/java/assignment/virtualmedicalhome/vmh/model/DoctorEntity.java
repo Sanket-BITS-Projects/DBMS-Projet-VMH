@@ -11,7 +11,7 @@ public class DoctorEntity {
     private int dId;
     private Collection<AppointmentEntity> appointmentsByDId;
     private PersonEntity personByDId;
-    private Collection<DoctorSpecialityEntity> doctorSpecialitiesByDId;
+    private Collection<SpecializationEntity> specializations;
 
     @Basic
     @Column(name = "FEES")
@@ -47,7 +47,7 @@ public class DoctorEntity {
         return Objects.hash(fees, dId);
     }
 
-    @OneToMany(mappedBy = "doctorByDoctorId")
+    @OneToMany(mappedBy = "doctor")
     public Collection<AppointmentEntity> getAppointmentsByDId() {
         return appointmentsByDId;
     }
@@ -66,12 +66,14 @@ public class DoctorEntity {
         this.personByDId = personByDId;
     }
 
-    @OneToMany(mappedBy = "doctorByDId")
-    public Collection<DoctorSpecialityEntity> getDoctorSpecialitiesByDId() {
-        return doctorSpecialitiesByDId;
+    @ManyToMany
+    @JoinTable(name = "DOCTOR_SPECIALITY", joinColumns = @JoinColumn(name = "D_ID"),
+            inverseJoinColumns = @JoinColumn(name = "SP_ID"))
+    public Collection<SpecializationEntity> getSpecializations() {
+        return specializations;
     }
 
-    public void setDoctorSpecialitiesByDId(Collection<DoctorSpecialityEntity> doctorSpecialitiesByDId) {
-        this.doctorSpecialitiesByDId = doctorSpecialitiesByDId;
+    public void setSpecializations(Collection<SpecializationEntity> specializations) {
+        this.specializations = specializations;
     }
 }

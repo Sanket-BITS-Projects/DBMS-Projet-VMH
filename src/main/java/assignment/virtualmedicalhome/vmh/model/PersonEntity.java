@@ -133,7 +133,7 @@ public class PersonEntity {
         return Objects.hash(pName, dob, phone, pId, email, password, balance, address, roleId);
     }
 
-    @OneToMany(mappedBy = "personByPatientId")
+    @OneToMany(mappedBy = "patient")
     public Collection<AppointmentEntity> getAppointmentsByPId() {
         return appointmentsByPId;
     }
@@ -152,7 +152,8 @@ public class PersonEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID", nullable = false)
+    @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID",
+            insertable = false, updatable = false, nullable = false)
     public RoleEntity getRoleByRoleId() {
         return roleByRoleId;
     }

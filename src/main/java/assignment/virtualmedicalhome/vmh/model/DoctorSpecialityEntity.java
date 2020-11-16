@@ -1,16 +1,17 @@
 package assignment.virtualmedicalhome.vmh.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "DOCTOR_SPECIALITY", schema = "PUBLIC", catalog = "VMHDB.DB")
-@IdClass(DoctorSpecialityEntityPK.class)
-public class DoctorSpecialityEntity {
+public class DoctorSpecialityEntity implements Serializable {
     private int spId;
     private int dId;
-    private SpecializationEntity specializationBySpId;
-    private DoctorEntity doctorByDId;
 
     @Id
     @Column(name = "SP_ID")
@@ -44,25 +45,5 @@ public class DoctorSpecialityEntity {
     @Override
     public int hashCode() {
         return Objects.hash(spId, dId);
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "SP_ID", referencedColumnName = "SP_ID", nullable = false)
-    public SpecializationEntity getSpecializationBySpId() {
-        return specializationBySpId;
-    }
-
-    public void setSpecializationBySpId(SpecializationEntity specializationBySpId) {
-        this.specializationBySpId = specializationBySpId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "D_ID", referencedColumnName = "D_ID", nullable = false)
-    public DoctorEntity getDoctorByDId() {
-        return doctorByDId;
-    }
-
-    public void setDoctorByDId(DoctorEntity doctorByDId) {
-        this.doctorByDId = doctorByDId;
     }
 }

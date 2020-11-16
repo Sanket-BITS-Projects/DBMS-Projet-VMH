@@ -13,8 +13,8 @@ public class PrescriptionEntity {
     private Date timestamp;
     private int prescId;
     private int aId;
-    private Collection<PrescribedLabTestsEntity> prescribedLabTestsByPrescId;
-    private Collection<PrescribedMedicineEntity> prescribedMedicinesByPrescId;
+    private Collection<LabTestsEntity> labTestsByPrescId;
+    private Collection<MedicineEntity> medicinesByPrescId;
     private AppointmentEntity appointmentByAId;
 
     @Basic
@@ -84,22 +84,26 @@ public class PrescriptionEntity {
         return Objects.hash(description, courseDuration, timestamp, prescId, aId);
     }
 
-    @OneToMany(mappedBy = "prescriptionByPrescId")
-    public Collection<PrescribedLabTestsEntity> getPrescribedLabTestsByPrescId() {
-        return prescribedLabTestsByPrescId;
+    @ManyToMany
+    @JoinTable(name = "PRESCRIBED_LAB_TESTS", joinColumns = @JoinColumn(name = "PRESC_ID"),
+            inverseJoinColumns = @JoinColumn(name = "LT_ID"))
+    public Collection<LabTestsEntity> getLabTestsByPrescId() {
+        return labTestsByPrescId;
     }
 
-    public void setPrescribedLabTestsByPrescId(Collection<PrescribedLabTestsEntity> prescribedLabTestsByPrescId) {
-        this.prescribedLabTestsByPrescId = prescribedLabTestsByPrescId;
+    public void setLabTestsByPrescId(Collection<LabTestsEntity> labTestsByPrescId) {
+        this.labTestsByPrescId = labTestsByPrescId;
     }
 
-    @OneToMany(mappedBy = "prescriptionByPrescId")
-    public Collection<PrescribedMedicineEntity> getPrescribedMedicinesByPrescId() {
-        return prescribedMedicinesByPrescId;
+    @ManyToMany
+    @JoinTable(name = "PRESCRIBED_MEDICINE", joinColumns = @JoinColumn(name = "PRESC_ID"),
+            inverseJoinColumns = @JoinColumn(name = "M_ID"))
+    public Collection<MedicineEntity> getMedicinesByPrescId() {
+        return medicinesByPrescId;
     }
 
-    public void setPrescribedMedicinesByPrescId(Collection<PrescribedMedicineEntity> prescribedMedicinesByPrescId) {
-        this.prescribedMedicinesByPrescId = prescribedMedicinesByPrescId;
+    public void setMedicinesByPrescId(Collection<MedicineEntity> medicinesByPrescId) {
+        this.medicinesByPrescId = medicinesByPrescId;
     }
 
     @OneToOne(mappedBy = "prescriptionByAId")

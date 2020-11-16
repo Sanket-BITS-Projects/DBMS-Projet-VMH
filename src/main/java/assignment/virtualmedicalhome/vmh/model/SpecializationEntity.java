@@ -9,7 +9,7 @@ import java.util.Objects;
 public class SpecializationEntity {
     private int spId;
     private String speciality;
-    private Collection<DoctorSpecialityEntity> doctorSpecialitiesBySpId;
+    private Collection<DoctorEntity> doctorsBySpId;
 
     @Id
     @Column(name = "SP_ID")
@@ -45,12 +45,12 @@ public class SpecializationEntity {
         return Objects.hash(spId, speciality);
     }
 
-    @OneToMany(mappedBy = "specializationBySpId")
-    public Collection<DoctorSpecialityEntity> getDoctorSpecialitiesBySpId() {
-        return doctorSpecialitiesBySpId;
+    @ManyToMany(mappedBy = "specializations")
+    public Collection<DoctorEntity> getDoctorsBySpId() {
+        return doctorsBySpId;
     }
 
-    public void setDoctorSpecialitiesBySpId(Collection<DoctorSpecialityEntity> doctorSpecialitiesBySpId) {
-        this.doctorSpecialitiesBySpId = doctorSpecialitiesBySpId;
+    public void setDoctorsBySpId(Collection<DoctorEntity> doctorsBySpId) {
+        this.doctorsBySpId = doctorsBySpId;
     }
 }

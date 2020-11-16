@@ -1,17 +1,18 @@
 package assignment.virtualmedicalhome.vmh.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "PRESCRIBED_MEDICINE", schema = "PUBLIC", catalog = "VMHDB.DB")
-@IdClass(PrescribedMedicineEntityPK.class)
-public class PrescribedMedicineEntity {
+//@IdClass(PrescribedMedicineEntityPK.class)
+public class PrescribedMedicineEntity implements Serializable {
     private String usage;
     private int mId;
     private int prescId;
-    private MedicineEntity medicineByMId;
-    private PrescriptionEntity prescriptionByPrescId;
+//    private MedicineEntity medicineByMId;
+//    private PrescriptionEntity prescriptionByPrescId;
 
     @Basic
     @Column(name = "USAGE")
@@ -58,23 +59,23 @@ public class PrescribedMedicineEntity {
         return Objects.hash(usage, mId, prescId);
     }
 
-    @ManyToOne
-    @JoinColumn(name = "M_ID", referencedColumnName = "M_ID", nullable = false)
-    public MedicineEntity getMedicineByMId() {
-        return medicineByMId;
-    }
-
-    public void setMedicineByMId(MedicineEntity medicineByMId) {
-        this.medicineByMId = medicineByMId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "PRESC_ID", referencedColumnName = "PRESC_ID", nullable = false)
-    public PrescriptionEntity getPrescriptionByPrescId() {
-        return prescriptionByPrescId;
-    }
-
-    public void setPrescriptionByPrescId(PrescriptionEntity prescriptionByPrescId) {
-        this.prescriptionByPrescId = prescriptionByPrescId;
-    }
+//    @ManyToOne
+//    @JoinColumn(name = "M_ID", referencedColumnName = "M_ID", nullable = false)
+//    public MedicineEntity getMedicineByMId() {
+//        return medicineByMId;
+//    }
+//
+//    public void setMedicineByMId(MedicineEntity medicineByMId) {
+//        this.medicineByMId = medicineByMId;
+//    }
+//
+//    @ManyToOne
+//    @JoinColumn(name = "PRESC_ID", referencedColumnName = "PRESC_ID", nullable = false)
+//    public PrescriptionEntity getPrescriptionByPrescId() {
+//        return prescriptionByPrescId;
+//    }
+//
+//    public void setPrescriptionByPrescId(PrescriptionEntity prescriptionByPrescId) {
+//        this.prescriptionByPrescId = prescriptionByPrescId;
+//    }
 }

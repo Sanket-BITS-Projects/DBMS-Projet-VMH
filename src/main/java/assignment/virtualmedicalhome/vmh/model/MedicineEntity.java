@@ -9,7 +9,7 @@ import java.util.Objects;
 public class MedicineEntity {
     private int mId;
     private String mName;
-    private Collection<PrescribedMedicineEntity> prescribedMedicinesByMId;
+    private Collection<PrescriptionEntity> prescriptionsByMId;
 
     @Id
     @Column(name = "M_ID")
@@ -45,12 +45,12 @@ public class MedicineEntity {
         return Objects.hash(mId, mName);
     }
 
-    @OneToMany(mappedBy = "medicineByMId")
-    public Collection<PrescribedMedicineEntity> getPrescribedMedicinesByMId() {
-        return prescribedMedicinesByMId;
+    @ManyToMany(mappedBy = "medicinesByPrescId")
+    public Collection<PrescriptionEntity> getPrescriptionsByMId() {
+        return prescriptionsByMId;
     }
 
-    public void setPrescribedMedicinesByMId(Collection<PrescribedMedicineEntity> prescribedMedicinesByMId) {
-        this.prescribedMedicinesByMId = prescribedMedicinesByMId;
+    public void setPrescriptionsByMId(Collection<PrescriptionEntity> prescriptionsByMId) {
+        this.prescriptionsByMId = prescriptionsByMId;
     }
 }

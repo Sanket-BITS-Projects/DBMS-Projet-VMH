@@ -9,7 +9,7 @@ import java.util.Objects;
 public class LabTestsEntity {
     private int ltId;
     private String ltName;
-    private Collection<PrescribedLabTestsEntity> prescribedLabTestsByLtId;
+    private Collection<PrescriptionEntity> prescriptionsByLtId;
 
     @Id
     @Column(name = "LT_ID")
@@ -45,12 +45,12 @@ public class LabTestsEntity {
         return Objects.hash(ltId, ltName);
     }
 
-    @OneToMany(mappedBy = "labTestsByLtId")
-    public Collection<PrescribedLabTestsEntity> getPrescribedLabTestsByLtId() {
-        return prescribedLabTestsByLtId;
+    @ManyToMany(mappedBy = "labTestsByPrescId")
+    public Collection<PrescriptionEntity> getPrescriptionsByLtId() {
+        return prescriptionsByLtId;
     }
 
-    public void setPrescribedLabTestsByLtId(Collection<PrescribedLabTestsEntity> prescribedLabTestsByLtId) {
-        this.prescribedLabTestsByLtId = prescribedLabTestsByLtId;
+    public void setPrescriptionsByLtId(Collection<PrescriptionEntity> prescriptionsByLtId) {
+        this.prescriptionsByLtId = prescriptionsByLtId;
     }
 }

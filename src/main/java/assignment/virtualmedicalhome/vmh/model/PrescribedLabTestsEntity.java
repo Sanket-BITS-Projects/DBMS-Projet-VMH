@@ -1,16 +1,17 @@
 package assignment.virtualmedicalhome.vmh.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "PRESCRIBED_LAB_TESTS", schema = "PUBLIC", catalog = "VMHDB.DB")
-@IdClass(PrescribedLabTestsEntityPK.class)
-public class PrescribedLabTestsEntity {
+public class PrescribedLabTestsEntity implements Serializable {
     private int ltId;
     private int prescId;
-    private LabTestsEntity labTestsByLtId;
-    private PrescriptionEntity prescriptionByPrescId;
 
     @Id
     @Column(name = "LT_ID")
@@ -44,25 +45,5 @@ public class PrescribedLabTestsEntity {
     @Override
     public int hashCode() {
         return Objects.hash(ltId, prescId);
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "LT_ID", referencedColumnName = "LT_ID", nullable = false)
-    public LabTestsEntity getLabTestsByLtId() {
-        return labTestsByLtId;
-    }
-
-    public void setLabTestsByLtId(LabTestsEntity labTestsByLtId) {
-        this.labTestsByLtId = labTestsByLtId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "PRESC_ID", referencedColumnName = "PRESC_ID", nullable = false)
-    public PrescriptionEntity getPrescriptionByPrescId() {
-        return prescriptionByPrescId;
-    }
-
-    public void setPrescriptionByPrescId(PrescriptionEntity prescriptionByPrescId) {
-        this.prescriptionByPrescId = prescriptionByPrescId;
     }
 }

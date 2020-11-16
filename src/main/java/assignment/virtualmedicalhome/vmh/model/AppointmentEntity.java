@@ -15,9 +15,9 @@ public class AppointmentEntity {
     private int patientId;
     private int iId;
     private int doctorId;
-    private PersonEntity personByPatientId;
+    private PersonEntity patient;
     private IllnessEntity illnessByIId;
-    private DoctorEntity doctorByDoctorId;
+    private DoctorEntity doctor;
     private PrescriptionEntity prescriptionByAId;
 
     @Id
@@ -121,17 +121,19 @@ public class AppointmentEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "PATIENT_ID", referencedColumnName = "P_ID", nullable = false)
-    public PersonEntity getPersonByPatientId() {
-        return personByPatientId;
+    @JoinColumn(name = "PATIENT_ID", referencedColumnName = "P_ID",
+            insertable = false, updatable = false, nullable = false)
+    public PersonEntity getPatient() {
+        return patient;
     }
 
-    public void setPersonByPatientId(PersonEntity personByPatientId) {
-        this.personByPatientId = personByPatientId;
+    public void setPatient(PersonEntity patient) {
+        this.patient = patient;
     }
 
     @ManyToOne
-    @JoinColumn(name = "I_ID", referencedColumnName = "I_ID", nullable = false)
+    @JoinColumn(name = "I_ID", referencedColumnName = "I_ID",
+            insertable = false, updatable = false, nullable = false)
     public IllnessEntity getIllnessByIId() {
         return illnessByIId;
     }
@@ -141,13 +143,14 @@ public class AppointmentEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "DOCTOR_ID", referencedColumnName = "D_ID", nullable = false)
-    public DoctorEntity getDoctorByDoctorId() {
-        return doctorByDoctorId;
+    @JoinColumn(name = "DOCTOR_ID", referencedColumnName = "D_ID",
+            insertable = false, updatable = false, nullable = false)
+    public DoctorEntity getDoctor() {
+        return doctor;
     }
 
-    public void setDoctorByDoctorId(DoctorEntity doctorByDoctorId) {
-        this.doctorByDoctorId = doctorByDoctorId;
+    public void setDoctor(DoctorEntity doctor) {
+        this.doctor = doctor;
     }
 
     @OneToOne
