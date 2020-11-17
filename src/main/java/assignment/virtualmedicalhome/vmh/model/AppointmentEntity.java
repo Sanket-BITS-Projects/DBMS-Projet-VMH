@@ -9,7 +9,6 @@ import java.util.Objects;
 public class AppointmentEntity {
     private int aId;
     private Date aDateTime;
-    private int duration;
     private Date timestamp;
     private char doctorAccept;
     private int patientId;
@@ -38,16 +37,6 @@ public class AppointmentEntity {
 
     public void setaDateTime(Date aDateTime) {
         this.aDateTime = aDateTime;
-    }
-
-    @Basic
-    @Column(name = "DURATION")
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 
     @Basic
@@ -107,7 +96,6 @@ public class AppointmentEntity {
         AppointmentEntity that = (AppointmentEntity) o;
         return Objects.equals(aId, that.aId) &&
                 Objects.equals(aDateTime, that.aDateTime) &&
-                Objects.equals(duration, that.duration) &&
                 Objects.equals(timestamp, that.timestamp) &&
                 Objects.equals(doctorAccept, that.doctorAccept) &&
                 Objects.equals(patientId, that.patientId) &&
@@ -117,7 +105,7 @@ public class AppointmentEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(aId, aDateTime, duration, timestamp, doctorAccept, patientId, iId, doctorId);
+        return Objects.hash(aId, aDateTime, timestamp, doctorAccept, patientId, iId, doctorId);
     }
 
     @ManyToOne
