@@ -47,7 +47,6 @@ public class RoleEntity {
         return Objects.hash(roleName, roleId);
     }
 
-    @JsonIgnore
     @OneToMany(mappedBy = "role")
     public Collection<PersonEntity> getPeopleByRoleId() {
         return peopleByRoleId;
