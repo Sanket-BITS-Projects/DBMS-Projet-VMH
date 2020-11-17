@@ -53,7 +53,7 @@
                 </div>
                 <div class="group">
                     <label for="pass" class="label">Address</label>
-                    <input  type="text" class="input" id="Address">
+                    <input  type="text" class="input" id="address">
                     <small class="small_message">Error Message</small>
                 </div>
                 <div class="group">

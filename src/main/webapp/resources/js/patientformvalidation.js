@@ -5,13 +5,15 @@ function checkInputs() {
     checkemail();
     checkphone();
     checkdate();
+    checkaddress();
 
-    if(checkname() && checkpassword() && checkemail() && checkphone() && checkdate()){
+    if(checkname() && checkpassword() && checkemail() && checkphone() && checkdate() && checkaddress()){
         var data = {};
         data.name = document.getElementById('username').value.trim();
         data.email = document.getElementById('email').value.trim();
         data.phone = document.getElementById('phone').value.trim();
         data.dob = document.getElementById('dob').value;
+        data.address = document.getElementById('address').value.trim();
         data.password = document.getElementById('confirmpassword').value;
 
         $.ajax({
@@ -28,9 +30,7 @@ function checkInputs() {
                     alert(error.responseJSON.error);
             }
         });
-
     }
-
 }
 
 function loginadmin(){
@@ -45,7 +45,7 @@ function loginadmin(){
         dataType: 'json',
         async: false,
         success: function(response){
-            if (response.result.role.roleId === 2) {
+            if (response.result.person.roleId === 1) {
                 window.location.replace("AdminHomePage");
             } else {
                 alert("Only Admin can Login through this page");
@@ -72,7 +72,7 @@ function loginuser(){
         dataType: 'json',
         async: false,
         success: function(response){
-            if (response.result.role.roleId === 1) {
+            if (response.result.person.roleId === 3) {
                 window.location.replace("patienthomepage");
             } else {
                 alert("Only Patient can Login through this page");
@@ -96,6 +96,17 @@ function checkdate() {
         return true;
     }
 }
+
+function checkaddress() {
+    var address = document.getElementById('address');
+    if(address.value === ""){
+        setErrorFor(address,'address cannot be Blank ');
+    }else{
+        setSuccessFor(address);
+        return true;
+    }
+}
+
 
 
 function checkname() {
