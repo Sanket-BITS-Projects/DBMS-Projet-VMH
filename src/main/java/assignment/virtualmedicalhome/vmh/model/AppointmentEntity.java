@@ -1,5 +1,7 @@
 package assignment.virtualmedicalhome.vmh.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
@@ -19,8 +21,23 @@ public class AppointmentEntity {
     private DoctorEntity doctor;
     private PrescriptionEntity prescriptionByAId;
 
+    public AppointmentEntity(){
+
+    }
+
+    public AppointmentEntity(int aId, Date appointmentdate, Date timestamp, char acceptance, int pId, int iId, int doctorID) {
+        this.aId = aId;
+        this.aDateTime = appointmentdate;
+        this.timestamp = timestamp;
+        this.doctorAccept = acceptance;
+        this.patientId = pId;
+        this.iId = iId;
+        this.doctorId = doctorID;
+    }
+
     @Id
     @Column(name = "A_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getaId() {
         return aId;
     }

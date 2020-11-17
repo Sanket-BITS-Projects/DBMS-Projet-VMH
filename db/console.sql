@@ -144,7 +144,6 @@ CREATE TABLE Appointment
 (
     a_id          INT AUTO_INCREMENT,
     a_date_time   DATE NOT NULL,
-    duration      INT     DEFAULT 15,
     timestamp     DATE NOT NULL,
     doctor_accept CHAR(1) DEFAULT '0',
     patient_id    INT  NOT NULL,

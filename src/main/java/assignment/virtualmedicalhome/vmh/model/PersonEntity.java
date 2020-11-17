@@ -180,7 +180,6 @@ public class PersonEntity {
     @ManyToOne
     @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID",
             insertable = false, updatable = false, nullable = false)
-    @JsonIgnore
     public RoleEntity getRole() {
         return role;
     }

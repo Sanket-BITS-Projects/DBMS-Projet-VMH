@@ -1,5 +1,7 @@
 package assignment.virtualmedicalhome.vmh.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
@@ -12,8 +14,19 @@ public class IllnessEntity {
     private String description;
     private Collection<AppointmentEntity> appointmentsByIId;
 
+    public  IllnessEntity(){
+
+    }
+
+    public IllnessEntity(int iId, String title, String description) {
+        this.iId = iId;
+        this.title = title;
+        this.description = description;
+    }
+
     @Id
     @Column(name = "I_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getiId() {
         return iId;
     }
@@ -58,6 +71,7 @@ public class IllnessEntity {
     }
 
     @OneToMany(mappedBy = "illnessByIId")
+    @JsonIgnore
     public Collection<AppointmentEntity> getAppointmentsByIId() {
         return appointmentsByIId;
     }
