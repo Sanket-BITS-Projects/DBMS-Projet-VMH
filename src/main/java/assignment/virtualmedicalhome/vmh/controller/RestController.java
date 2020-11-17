@@ -702,6 +702,45 @@ public class RestController {
     }*/
 
 
+    @RequestMapping("/Doctordetails")
+    public ResponseEntity<GenericResponse> DoctorInfo(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+        try {
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            PersonEntity person = session.getPerson();
+            DoctorEntity doctor = person.getDoctorByPId();
+            return GenericResponse.getSuccessResponse(doctor);
+        } catch (InvalidSessionException | UnauthorizedException e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(
+                    "Something went wrong, contact admin!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    @RequestMapping("/Patientdetails")
+    public ResponseEntity<GenericResponse> personInfo(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+        try {
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            PersonEntity person = session.getPerson();
+            return GenericResponse.getSuccessResponse(person);
+        } catch (InvalidSessionException | UnauthorizedException e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(
+                    "Something went wrong, contact admin!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     @PostMapping("/signUpUser")
     public ResponseEntity<GenericResponse> signUp(
             @RequestParam String name,
