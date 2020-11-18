@@ -23,14 +23,14 @@
     });
 
     function profileInfo(data) {
-        var dateformat = getFormattedDate(data[0].dob);
-        setBalance("₹" + data[1].balance);
+        var dateformat = getFormattedDate(data.dob);
+        setBalance("₹" + data.balance);
         document.write("<div class='w3-sidebar w3-light-grey w3-bar-block' style='width:20%'>  <button style=\"margin: 10;padding: 8px;\" onclick=\"onLogout()\">Logout</button>  <h3 style='margin-top: 0;' class='w3-bar-item'>Profile</h3>" +
             "    <div style='margin-left:7%;font-size: 14;'>" +
-            data[0].name + "<br>" +
-            data[0].email + "<br>" +
+            data.pName + "<br>" +
+            data.email + "<br>" +
             dateformat + "<br>" +
-            "+91 " + data[0].phone + "<br>" +
+            "+91 " + data.phone + "<br>" +
             "    </div>" +
             "</div>");
     }
@@ -120,8 +120,8 @@
                 document.write("  <div class=\"form-container\">\n" +
                     "    <button type=\"button\" class=\"closebtn cancel\" onclick=\"closeappointmentForm()\">X  </button>\n" +
                     "\n" +
-                    "    <label for=\"spname\" style='float: left; margin-top: 30;'>Select Specialization :</label>\n" +
-                    "<select name=\"spname\" id=\"spname\" style='margin: 5 30 20 10; padding: 10 30;'>\n" +
+                    "    <label for=\"spName\" style='float: left; margin-top: 30;'>Select Specialization :</label>\n" +
+                    "<select name=\"spName\" id=\"spName\" style='margin: 5 30 20 10; padding: 10 30;'>\n" +
                     "    <option value=\"Physician\">Physician</option>\n" +
                     "    <option value=\"Pediatrician\">Pediatrician</option>\n" +
                     "    <option value=\"Gynecologist\">Gynecologist</option>\n" +
@@ -142,8 +142,8 @@
                     "</div>");
 
                 function loadSearchPage() {
-                    var sp = document.getElementById("spname");
-                    window.location.replace('SearchResults?spname=' + sp.options[sp.selectedIndex].value);
+                    var sp = document.getElementById("spName");
+                    window.location.replace('SearchResults?spName=' + sp.options[sp.selectedIndex].value);
                 }
             </script>
         </div>
@@ -158,7 +158,7 @@
 
     $.ajax({
         method: "GET",
-        url: "PatientAppointmentHistory",
+        url: "PatientAppointments",
         dataType: 'json',
         async: false,
         success: function (response) {
@@ -169,10 +169,10 @@
     document.write("<table id='AppointmentTable'" + "><tr><th>" + "Doctor Name" + "</th><th>" + "Appointment Date" + "</th> <th>Status</th> <th>Amount Paid</th> <th>Prescription</th> <th>Feedback</th> </tr>");
     if (Object.keys(apntData).length) {
         Object.keys(apntData).forEach(function (i) {
-            if (apntData[i].AppointmentStatus === "1") {
-                document.write("<tr><td>" + apntData[i].DoctorName + "</td><td>" + apntData[i].AppointmentDate + "</td><td>" + "Done" + "</td><td>" + apntData[i].AmountPaid + "</td><td>" + "<Button id=" + i + " onclick=\"on()\">Show</button>" + "</td><td>" + "<Button id=" + i + " onclick=Feedback(" + (apntData[i].AppointmentId) + ")>Provide</button>" + "</td></tr>");
+            if (apntData[i].doctorAccept === "1") {
+                document.write("<tr><td>" + apntData[i].doctor.personByDId.pName + "</td><td>" + apntData[i].aDateTime.substr(0,10) + "</td><td>" + "Done" + "</td><td>" + apntData[i].doctor.fees + "</td><td>" + "<Button id=" + i + " onclick=\"on()\">Show</button>" + "</td><td>" + "<Button id=" + i + " onclick=Feedback(" + (apntData[i].aId) + ")>Provide</button>" + "</td></tr>");
             } else {
-                document.write("<tr><td>" + apntData[i].DoctorName + "</td><td>" + apntData[i].AppointmentDate + "</td><td>" + "Pending" + "</td><td>" + "--" + "</td><td>" + "--" + "</td><td>" + "--" + "</td></tr>");
+                document.write("<tr><td>" + apntData[i].doctor.personByDId.pName + "</td><td>" + apntData[i].aDateTime.substr(0,10) + "</td><td>" + "Pending" + "</td><td>" + "--" + "</td><td>" + "--" + "</td><td>" + "--" + "</td></tr>");
             }
         });
     } else {

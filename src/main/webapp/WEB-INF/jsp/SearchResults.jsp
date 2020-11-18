@@ -20,7 +20,7 @@
     $.ajax({
         method: "POST",
         url: "SearchDoctor",
-        data: {spName: p.get("spname")},
+        data: {spName: p.get("spName")},
         dataType: 'json',
         async: false,
         success: function (response) {
@@ -28,25 +28,31 @@
             setData(response.result);
         }
     });
+    function onBack(){
+        window.location.replace("patienthomepage")
+    }
     function setData(doclist) {
         list=Object.keys(doclist);
         document.write("<h2 style='background: #4a824a;\n" +
             "    padding: 30px;\n" +
-            "    color: white;'>Search Results (" + list.length + ")</h2>")
+            "    color: white;'>Search Results (" + list.length + ")</h2>" +
+            "<button onclick=\"onBack()\" style=\"margin-left: 90%;\n" +
+            "    padding: 10 20;\n" +
+            "    color: white;\n" +
+            "    background: #264426;\n" +
+            "    margin-top: -80;\">back</button>")
         document.write("<table cellspacing='0' width=80% style='margin-left: 10%;border: 0px' id=\"DocTable\">");
         if (list) {
             list.forEach(function (i) {
                 document.write("<tr>\n" +
                     "        <td>"+
-                    doclist[i].DoctorName +
+                    doclist[i].personByDId.pName +
                     "</td><td style='text-align: right;'>"+
-                    doclist[i].DoctorSpeciality +
-                    "</td></tr><tr style='background-color: "+ getColor(i)+"'><td>"+
-                    doclist[i].DoctorExperience +
-                    " Years of experience</td><td style='text-align: right;'>₹ "+
-                    doclist[i].DoctorCommission+"" +
-                    "</td></tr><tr style='margin-bottom: 15px'><td>Cures: "+
-                    doclist[i].DoctorsExpertFields+
+                    doclist[i].specializations[0].speciality +
+                    "</td></tr><tr style='background-color: "+ getColor(i)+"'><td>" +
+                    "</td><td style='text-align: right;'>₹ "+
+                    doclist[i].fees+"" +
+                    "</td></tr><tr style='margin-bottom: 15px'><td>" +
                     "</td><td style='text-align: right;'><button id="+i+" onclick='newApnt()'>Request Appointment</button></td>\n" +
                     "    </tr>");
             })
@@ -80,7 +86,7 @@
                 data: {Title: ill,
                     Description: desc,
                     Appointment_Date: date,
-                    DoctorID: doclist[Did].DoctorID
+                    DoctorID: doclist[Did].dId
                 },
                 dataType: 'json',
                 async: false,
