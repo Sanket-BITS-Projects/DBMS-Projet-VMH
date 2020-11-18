@@ -66,6 +66,30 @@ public class RestController {
             );
         }
     }
+    @PostMapping("/GetDoctorWithSpecialization")
+    public ResponseEntity<GenericResponse> searchDoctorForAdmin(@CookieValue(name = "SESSION_ID", required = false) String sessionId,
+                                                        @RequestParam String spName) {
+        try {
+        	 SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                     .orElseThrow(InvalidSessionException::new);
+             if (session.getPerson().getRole().getRoleId() != 1) {
+                 throw new UnauthorizedException("Admin can only access this data");}
+            SpecializationEntity specialization = specialRepo.getSpecializationEntityBySpeciality(spName);
+            if (specialization == null) {
+                return GenericResponse.getFailureResponse("Specialization not found", HttpStatus.BAD_REQUEST);
+            }
+            return GenericResponse.getSuccessResponse(specialization.getDoctorsBySpId());
+        } catch (InvalidSessionException | UnauthorizedException e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(
+                    "Something went wrong, please contact admin!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 
     @RequestMapping("/PatientAppointments")
     public ResponseEntity<GenericResponse> patientAppointmentList(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
