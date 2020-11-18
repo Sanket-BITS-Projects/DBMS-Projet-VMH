@@ -23,4 +23,7 @@ public interface AppointmentRepository extends CrudRepository<AppointmentEntity,
 
     @Query(value = "select * from AppointmentEntity as a where a.doctor_Accept = 0 and a.a_Date_Time = current_date and a.doctor_Id = :Doctor", nativeQuery = true)
     List<AppointmentEntity> findDoctorSchedule(@Param("Doctor") int doctorId);
+
+    @Query(value = "select * from APPOINTMENT as a where a.DOCTOR_ACCEPT = 1 and a.A_DATE_TIME = :app_date", nativeQuery = true)
+    ArrayList<AppointmentEntity> findByTime(@Param("app_date") Date A_DATE_TIME);
 }

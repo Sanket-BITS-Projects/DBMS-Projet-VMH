@@ -115,8 +115,8 @@ public class RestController {
         }
     }
 
-    /*
-    @RequestMapping("/AppointmentlistbyDate")
+    
+    @RequestMapping("/AppointmentlistbyDateForAdmin")
     public ResponseEntity<GenericResponse> GetTAppointmentList(@CookieValue(name = "SESSION_ID", required = false) String sessionId,
                                                                @RequestParam String Date) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -128,48 +128,27 @@ public class RestController {
                     "Unknown date format! Date format should be dd-MM-yyyy",
                     HttpStatus.BAD_REQUEST);
         }
-        try {
-            Authentication auth = personService.getAuthentication(authRepo, sessionId);
-            Person person = personService.getAuthorizedAdmin(repository, auth);
-            List<Appointment> appointments = appointmentRepo.findByTime(app_date);
-            HashMap<Integer, Object> appointmentdetails = new HashMap<Integer, Object>();
-            int size = appointments.size();
-            for (int i = 0; i < size; i++) {
-                Person patient = repository.findById(appointments.get(i).getPatient()).get();
-                Person Doctor = repository.findById(appointments.get(i).getDoctor()).get();
-                Prescription prescription = presRepo.findByAppointmentId(appointments.get(i).getId());
-                DoctorCommission doctorCommission = commissionRepo.findByDoctorId(appointments.get(i).getDoctor());
-                int appointmentstatus = appointments.get(i).getDoctorAccept();
-                HashMap<String, String> dummy = new HashMap<String, String>();
-                dummy.put("AppointmentId", Integer.toString(appointments.get(i).getId()));
-                dummy.put("DoctorId", Integer.toString(Doctor.getId()));
-                dummy.put("DoctorName", Doctor.getName());
-                dummy.put("PatientName", patient.getName());
-                dummy.put("PatientId", Integer.toString(patient.getId()));
-                dummy.put("AppointmentDate", formatter.format(appointments.get(i).getTime()));
-                dummy.put("AppointmentStatus", Integer.toString(appointmentstatus));
-                if (appointmentstatus == 0) {
-                    dummy.put("Fees", "");
-                    dummy.put("prescription", "");
-                } else {
-                    dummy.put("Fees", Integer.toString(doctorCommission.getFees()));
-                    dummy.put("prescription", prescription.getDescription());
-                }
-                appointmentdetails.put(i, dummy);
+        try {SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                .orElseThrow(InvalidSessionException::new);
+        if (session.getPerson().getRole().getRoleId() != 1) {
+            throw new UnauthorizedException("Admin can only access this data");
             }
-
-            return GenericResponse.getSuccessResponse(appointmentdetails);
+            ArrayList<AppointmentEntity> appointments = new ArrayList<AppointmentEntity>();
+             appointments = appointmentRepo.findByTime(app_date);
+            System.out.println(appointments.toString());
+            return GenericResponse.getSuccessResponse(appointments);
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();
             return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             e.printStackTrace();
             return GenericResponse.getFailureResponse(
-                    "Something went wrong, contact admin!",
+                    "Something went wrong!",
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-    }*/
+    }
+
 
     @RequestMapping("/DoctorAppointmentsForAdmin")
     public ResponseEntity<GenericResponse> doctorAppointmentListForAdmin(@CookieValue(name = "SESSION_ID", required = false) String sessionId,
