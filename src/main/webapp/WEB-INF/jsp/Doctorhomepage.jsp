@@ -23,16 +23,16 @@
     });
 
     function profileInfo(data) {
-        var dateformat = getFormattedDate(data[0].dob);
-        setBalance("₹" + data[2].balance);
+        var dateformat = getFormattedDate(data.personByDId.dob);
+        setBalance("₹" + data.personByDId.balance);
         document.write("<div class='w3-sidebar w3-light-grey w3-bar-block' style='width:20%'>  <button style=\"margin: 10;padding: 8px;\" onclick=\"onLogout()\">Logout</button>  <h3 class='w3-bar-item'>Profile</h3>" +
             "    <div style='margin-left:7%;font-size: 14;'>" +
-            data[0].name + "<br>" +
-            data[0].email + "<br>" +
-            data[1].specialization.spName + "<br>" +
-            "fees: " + "₹" + data[3].fees + "<br>" +
+            data.personByDId.pName + "<br>" +
+            data.personByDId.email + "<br>" +
+            data.specializations[0].speciality + "<br>" +
+            "fees: " + "₹" + data.fees + "<br>" +
             dateformat + "<br>" +
-            "+91 " + data[0].phone + "<br>" +
+            "+91 " + data.personByDId.phone + "<br>" +
             "    </div>" +
             "</div>");
     }

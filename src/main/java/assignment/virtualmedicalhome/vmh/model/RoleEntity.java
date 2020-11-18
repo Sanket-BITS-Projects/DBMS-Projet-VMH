@@ -48,6 +48,7 @@ public class RoleEntity {
     }
 
     @OneToMany(mappedBy = "role")
+    @JsonIgnore
     public Collection<PersonEntity> getPeopleByRoleId() {
         return peopleByRoleId;
     }

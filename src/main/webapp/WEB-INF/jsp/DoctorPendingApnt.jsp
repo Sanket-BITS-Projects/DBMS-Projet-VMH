@@ -151,8 +151,8 @@ window.location.replace("Doctorhomepage")
         if(Object.keys(result).length) {
             Object.keys(result).forEach(function (i) {
                 document.write("    <tr>\n" +
-                    "        <td>" + result[i].patient.name + "</td>\n" +
-                    "        <td>" + appointmentdate(result[i].appointment.time) + "</td>\n" +
+                    "        <td>" + result[i].patient.pName + "</td>\n" +
+                    "        <td>" + result[i].aDateTime.substr(0,10) + "</td>\n" +
                     "        <td><button id=" + i + " onclick=showIllness()>Show</button></td>\n" +
                     "        <td><button id=" + i + " onclick=provide()>Provide</button></td>\n" +
                     "    </tr>\n");
@@ -218,7 +218,7 @@ var aid;
             "<h3 style='text-align: center;'> Patient Illness Description</h3>" +
             "        <TABLE border=\"0\" style=\"color: white;\" cellpadding=\"5px\">\n" +
             "            <tr>\n" +
-            "                <td>Patient Name: " + result[event.target.id].patient.name + "</td>\n" +
+            "                <td>Patient Name: " + result[event.target.id].patient.pName + "</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
@@ -226,7 +226,7 @@ var aid;
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Appointment No. " + result[event.target.id].appointment.id + "</td>\n" +
+            "                <td>Appointment No. " + result[event.target.id].aId + "</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
@@ -238,13 +238,13 @@ var aid;
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <th>Illness Reason: " + result[event.target.id].illness.title + "</th><td></td>\n" +
+            "                <th>Illness Reason: " + result[event.target.id].illnessByIId.title + "</th><td></td>\n" +
             "            </tr>\n" +
             "        </TABLE>\n" +
             "        <br>\n" +
             "        \n" +
             "<p style='margin: 0 0 0 9; font-size: 18; font-weight: bold;'>Illness Description:</p><p color=white style='font-size: 15px;text-align: left; margin: 10 10 10 10;'>" +
-            result[event.target.id].illness.description + "</p>"
+            result[event.target.id].illnessByIId.description + "</p>"
         "    </div>\n";
         document.getElementById("overlay").style.display = "block";
     }
