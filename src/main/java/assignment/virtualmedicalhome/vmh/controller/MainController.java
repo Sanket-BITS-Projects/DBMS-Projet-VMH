@@ -33,7 +33,7 @@ public class MainController {
 
     @RequestMapping("/AdminHomePage")
     public String AdminHomePage() {
-        return "AdminPage";
+        return "NewAdminPage";
     }
 
 
