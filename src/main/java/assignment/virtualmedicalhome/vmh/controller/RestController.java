@@ -138,8 +138,97 @@ public class RestController {
             );
         }
     }
-
     
+    @RequestMapping("/PatientLists")
+    public ResponseEntity<GenericResponse> patientList(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+        try {
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            if (session.getPerson().getRole().getRoleId() != 1) {
+                throw new UnauthorizedException("Admin can only access this data");
+            }
+            ArrayList<PersonEntity> oPersonEntity = repository.findAllPatients();  
+            
+            return GenericResponse.getSuccessResponse(oPersonEntity);
+        } catch (InvalidSessionException | UnauthorizedException e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(
+                    "Something went wrong, contact admin!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+    
+    @RequestMapping("/PatientCount")
+    public ResponseEntity<GenericResponse> patientCount(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+        try {
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            if (session.getPerson().getRole().getRoleId() != 1) {
+                throw new UnauthorizedException("Admin can only access this data");
+            }
+            
+            int Count = repository.CountAllPatients();
+            return GenericResponse.getSuccessResponse(Count);
+        } catch (InvalidSessionException | UnauthorizedException e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(
+                    "Something went wrong, contact admin!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+		
+    }
+    
+    @RequestMapping("/DoctorLists")
+    public ResponseEntity<GenericResponse> DoctorList(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+        try {
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            if (session.getPerson().getRole().getRoleId() != 1) {
+                throw new UnauthorizedException("Admin can only access this data");
+            }
+            ArrayList<PersonEntity> oPersonEntity = repository.findAllDoctors();  
+            int Count = repository.CountAllDoctors();
+            return GenericResponse.getSuccessResponse(oPersonEntity);
+        } catch (InvalidSessionException | UnauthorizedException e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(
+                    "Something went wrong, contact admin!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+    @RequestMapping("/DoctorCount")
+    public ResponseEntity<GenericResponse> DoctorCount(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+        try {
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            if (session.getPerson().getRole().getRoleId() != 1) {
+                throw new UnauthorizedException("Admin can only access this data");
+            } 
+            int Count = repository.CountAllDoctors();
+            return GenericResponse.getSuccessResponse(Count);
+        } catch (InvalidSessionException | UnauthorizedException e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(
+                    "Something went wrong, contact admin!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
     @RequestMapping("/AppointmentlistbyDateForAdmin")
     public ResponseEntity<GenericResponse> GetTAppointmentList(@CookieValue(name = "SESSION_ID", required = false) String sessionId,
                                                                @RequestParam String Date) {

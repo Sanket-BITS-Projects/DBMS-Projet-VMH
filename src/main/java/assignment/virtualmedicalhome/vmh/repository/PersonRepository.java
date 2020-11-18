@@ -2,6 +2,9 @@ package assignment.virtualmedicalhome.vmh.repository;
 
 
 import assignment.virtualmedicalhome.vmh.model.PersonEntity;
+
+import java.util.ArrayList;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,10 +12,22 @@ import org.springframework.stereotype.Repository;
 public interface PersonRepository extends CrudRepository<PersonEntity, Integer> {
     PersonEntity findByEmail(String email);
 
-    /*@Query(value = "select p from Person as p where p.role.roleId = 3")
-    Iterable<Person> findAllDoctors();
 
-    @Query(value = "select p from Person as p where p.role.roleId = 1")
+    @Query(value = "select * from PERSON as p where p.ROLE_ID = 3", nativeQuery = true)
+    ArrayList<PersonEntity> findAllPatients();
+    
+    @Query(value = "select count(*) from PERSON as p where p.ROLE_ID = 3", nativeQuery = true)
+     int  CountAllPatients();
+
+
+    @Query(value = "select count(*) from PERSON as p where p.ROLE_ID = 2", nativeQuery = true)
+	int CountAllDoctors();
+
+
+    @Query(value = "select * from PERSON as p where p.ROLE_ID = 2", nativeQuery = true)
+    ArrayList<PersonEntity> findAllDoctors();
+
+   /* @Query(value = "select p from Person as p where p.role.roleId = 1")
     Iterable<Person> findAllPatients();
 
     @Modifying
