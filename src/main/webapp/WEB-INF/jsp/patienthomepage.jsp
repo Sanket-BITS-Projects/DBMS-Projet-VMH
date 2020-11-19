@@ -74,7 +74,7 @@
 <div style="margin-left:20%">
 
     <div class="w3-container w3-teal">
-        <h1>Welcome to Virtual Medical Home</h1>
+        <h1>Welcome to LifePlus Cares </h1>
         <div style="text-align: right; margin-top: -5px">
             <script>
                 document.write("<div class=\"tooltip right\">\n");

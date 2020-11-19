@@ -6,8 +6,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "PRESCRIBED_MEDICINE")
-//@IdClass(PrescribedMedicineEntityPK.class)
-public class PrescribedMedicineEntity implements Serializable {
+@IdClass(PrescribedMedicineEntityPK.class)
+public class PrescribedMedicineEntity {
     private String usage;
     private int mId;
     private int prescId;
