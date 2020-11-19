@@ -7,7 +7,11 @@ import assignment.virtualmedicalhome.vmh.response.InvalidSessionException;
 import assignment.virtualmedicalhome.vmh.response.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +30,7 @@ public class RestController {
     private final SpecializationRepository specialRepo;
     private final DoctorRepository docRepo;
     private final IllnessReposirory illRepo;
+    private final MedicineRepository medRepo;
 
     public RestController(
             PersonRepository repository,
@@ -34,7 +39,8 @@ public class RestController {
             RoleRepository roleRepo,
             SpecializationRepository specialRepo,
             DoctorRepository docRepo,
-            IllnessReposirory illRepo) {
+            IllnessReposirory illRepo,
+            MedicineRepository medicineRepository) {
         this.repository = repository;
         this.authRepo = authRepo;
         this.appointmentRepo = appointmentRepo;
@@ -42,6 +48,7 @@ public class RestController {
         this.specialRepo = specialRepo;
         this.docRepo = docRepo;
         this.illRepo = illRepo;
+        this.medRepo = medicineRepository;
     }
 
     @PostMapping("/SearchDoctor")
@@ -813,7 +820,23 @@ public class RestController {
         return GenericResponse.getFailureResponse(error, status);
     }
 
-
+    @RequestMapping("/medicines")
+    public ResponseEntity<GenericResponse> getAllMedicines(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+        try {
+            authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            return GenericResponse.getSuccessResponse(medRepo.findAll());
+        } catch (InvalidSessionException | UnauthorizedException e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(
+                    "Something went wrong, contact admin!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 
     @PostMapping("/login")
     public ResponseEntity<GenericResponse> login(HttpServletRequest request, HttpServletResponse response) {

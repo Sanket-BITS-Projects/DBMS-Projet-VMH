@@ -56,6 +56,12 @@ CREATE TABLE Medicine
     PRIMARY KEY (m_id)
 );
 
+INSERT INTO Medicine(m_name) VALUES ('Zincovit');
+INSERT INTO Medicine(m_name) VALUES ('Paracetamol');
+INSERT INTO Medicine(m_name) VALUES ('Crocin');
+INSERT INTO Medicine(m_name) VALUES ('Vics Action 500');
+INSERT INTO Medicine(m_name) VALUES ('Biorex');
+
 CREATE TABLE Lab_Tests
 (
     lt_id   INT AUTO_INCREMENT,
