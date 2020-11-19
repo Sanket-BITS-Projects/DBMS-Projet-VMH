@@ -5,6 +5,7 @@ import assignment.virtualmedicalhome.vmh.repository.*;
 import assignment.virtualmedicalhome.vmh.response.GenericResponse;
 import assignment.virtualmedicalhome.vmh.response.InvalidSessionException;
 import assignment.virtualmedicalhome.vmh.response.UnauthorizedException;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -31,6 +32,7 @@ public class RestController {
     private final DoctorRepository docRepo;
     private final IllnessReposirory illRepo;
     private final MedicineRepository medRepo;
+    private final LabTestRepository labRepo;
 
     public RestController(
             PersonRepository repository,
@@ -40,7 +42,8 @@ public class RestController {
             SpecializationRepository specialRepo,
             DoctorRepository docRepo,
             IllnessReposirory illRepo,
-            MedicineRepository medicineRepository) {
+            MedicineRepository medicineRepository,
+            LabTestRepository labRepo) {
         this.repository = repository;
         this.authRepo = authRepo;
         this.appointmentRepo = appointmentRepo;
@@ -49,6 +52,7 @@ public class RestController {
         this.docRepo = docRepo;
         this.illRepo = illRepo;
         this.medRepo = medicineRepository;
+        this.labRepo = labRepo;
     }
 
     @PostMapping("/SearchDoctor")
@@ -847,10 +851,19 @@ public class RestController {
 
     @RequestMapping("/medicines")
     public ResponseEntity<GenericResponse> getAllMedicines(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+        return getAllFromATable(sessionId, medRepo);
+    }
+
+    @RequestMapping("/labTests")
+    public ResponseEntity<GenericResponse> getAllLabTests(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+        return getAllFromATable(sessionId, labRepo);
+    }
+
+    private ResponseEntity<GenericResponse> getAllFromATable(String sessionId, CrudRepository<?, ?> repo) {
         try {
             authRepo.getSessionEntityBySessionId(sessionId)
                     .orElseThrow(InvalidSessionException::new);
-            return GenericResponse.getSuccessResponse(medRepo.findAll());
+            return GenericResponse.getSuccessResponse(repo.findAll());
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();
             return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
