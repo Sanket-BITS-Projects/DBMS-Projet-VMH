@@ -236,6 +236,31 @@ public class RestController {
             );
         }
     }
+  //App revenue for today which is 15% comission on each doctor fee collected on current date
+    @RequestMapping("/AppRevenue")
+    public ResponseEntity<GenericResponse> AppRevenue(@CookieValue(name = "SESSION_ID", required = false)String sessionId) {
+                                                              
+      
+        try {SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                .orElseThrow(InvalidSessionException::new);
+        if (session.getPerson().getRole().getRoleId() != 1) {
+            throw new UnauthorizedException("Admin can only access this data");
+            }
+        Map<String ,Object> Apprevenue = new HashMap<String, Object>();
+        Apprevenue = appointmentRepo.findRevenue();
+            //System.out.println(appointments.toString());
+            return GenericResponse.getSuccessResponse(Apprevenue);
+        } catch (InvalidSessionException | UnauthorizedException e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(
+                    "Something went wrong!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
     //Highest No. Of Appointments for Patients for Doctor -- So as to get more comission on fees
     @RequestMapping("TopDoctor")
     public ResponseEntity<GenericResponse> TopDoctor(@CookieValue(name = "SESSION_ID", required = false)String sessionId) {
