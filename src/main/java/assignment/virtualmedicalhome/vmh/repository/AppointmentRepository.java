@@ -13,6 +13,7 @@ import java.util.Map;
 
 @Repository
 public interface AppointmentRepository extends CrudRepository<AppointmentEntity, Integer> {
+
     @Query(value = "select a from AppointmentEntity as a where a.patientId = :patient and a.doctorAccept = 1 and a.timestamp < :endDate")
     Iterable<AppointmentEntity> findAppointmentByPatientTillDate(int patient, Date endDate);
 

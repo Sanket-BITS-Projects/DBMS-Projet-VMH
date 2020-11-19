@@ -1,6 +1,9 @@
 package assignment.virtualmedicalhome.vmh.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
@@ -16,6 +19,17 @@ public class PrescriptionEntity {
     private Collection<LabTestsEntity> labTestsByPrescId;
     private Collection<MedicineEntity> medicinesByPrescId;
     private AppointmentEntity appointmentByAId;
+
+    public PrescriptionEntity() {
+
+    }
+
+    public PrescriptionEntity(int aId, String description, int courseDuration) {
+        this.aId = aId;
+        this.description = description;
+        this.courseDuration = courseDuration;
+        this.timestamp = Calendar.getInstance().getTime();
+    }
 
     @Basic
     @Column(name = "DESCRIPTION")
@@ -48,6 +62,7 @@ public class PrescriptionEntity {
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PRESC_ID")
     public int getPrescId() {
         return prescId;
@@ -107,6 +122,7 @@ public class PrescriptionEntity {
     }
 
     @OneToOne(mappedBy = "prescriptionByAId")
+    @JsonIgnore
     public AppointmentEntity getAppointmentByAId() {
         return appointmentByAId;
     }
