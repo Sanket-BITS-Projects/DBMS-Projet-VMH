@@ -47,4 +47,7 @@ public class MainController {
     @RequestMapping("/DoctorPendingApnt")
     public String DoctorPendingApntMapping(){return "DoctorPendingApnt";}
 
+    @RequestMapping("/dummy")
+    public String dummy(){return "dummy";}
+
 }
