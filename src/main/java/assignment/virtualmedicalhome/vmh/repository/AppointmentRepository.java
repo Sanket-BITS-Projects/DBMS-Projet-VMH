@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface AppointmentRepository extends CrudRepository<AppointmentEntity, Integer> {
@@ -26,4 +27,10 @@ public interface AppointmentRepository extends CrudRepository<AppointmentEntity,
 
     @Query(value = "select * from APPOINTMENT as a where a.DOCTOR_ACCEPT = 1 and a.A_DATE_TIME = :app_date", nativeQuery = true)
     ArrayList<AppointmentEntity> findByTime(@Param("app_date") Date A_DATE_TIME);
+
+    @Query(value = "SELECT MAX(TOTAL) AS NO_OF_APPOINTMENTS , ID , NAME FROM(select a.PATIENT_ID AS ID, count(*) AS TOTAL , p.P_NAME AS NAME , a.DOCTOR_ACCEPT from APPOINTMENT AS a JOIN PERSON AS p ON a.PATIENT_ID = p.P_ID where a.DOCTOR_ACCEPT = 1 group by a.PATIENT_ID);", nativeQuery = true)
+    Map<String, Object> findFreqPatient();
+
+    @Query(value = "SELECT MAX(TOTAL) AS NO_OF_APPOINTMENTS , ID , NAME FROM(select a.DOCTOR_ID AS ID, count(*) AS TOTAL , p.P_NAME AS NAME , a.DOCTOR_ACCEPT from APPOINTMENT AS a JOIN PERSON AS p ON a.DOCTOR_ID = p.P_ID where a.DOCTOR_ACCEPT = 1 group by a.DOCTOR_ID);", nativeQuery = true)
+	Map<String, Object> findTopDoctor();
 }
