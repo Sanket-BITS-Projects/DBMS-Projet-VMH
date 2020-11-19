@@ -33,4 +33,7 @@ public interface AppointmentRepository extends CrudRepository<AppointmentEntity,
 
     @Query(value = "SELECT MAX(TOTAL) AS NO_OF_APPOINTMENTS , ID , NAME FROM(select a.DOCTOR_ID AS ID, count(*) AS TOTAL , p.P_NAME AS NAME , a.DOCTOR_ACCEPT from APPOINTMENT AS a JOIN PERSON AS p ON a.DOCTOR_ID = p.P_ID where a.DOCTOR_ACCEPT = 1 group by a.DOCTOR_ID);", nativeQuery = true)
 	Map<String, Object> findTopDoctor();
+    
+    @Query(value = "SELECT  SUM(0.15*d.FEES) AS  APP_REVENUE  FROM APPOINTMENT AS a JOIN DOCTOR AS d ON a.DOCTOR_ID = d.D_ID WHERE a.A_DATE_TIME = CURRENT_DATE() and a.DOCTOR_ACCEPT = 1;", nativeQuery = true)
+	Map<String, Object> findRevenue();
 }
