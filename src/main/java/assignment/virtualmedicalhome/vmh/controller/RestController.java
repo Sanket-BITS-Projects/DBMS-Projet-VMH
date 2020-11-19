@@ -229,6 +229,57 @@ public class RestController {
             );
         }
     }
+    //Highest No. Of Appointments for Patients for Doctor -- So as to get more comission on fees
+    @RequestMapping("TopDoctor")
+    public ResponseEntity<GenericResponse> TopDoctor(@CookieValue(name = "SESSION_ID", required = false)String sessionId) {
+                                                              
+      
+        try {SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                .orElseThrow(InvalidSessionException::new);
+        if (session.getPerson().getRole().getRoleId() != 1) {
+            throw new UnauthorizedException("Admin can only access this data");
+            }
+        Map<String ,Object> TopDoctors= new HashMap<String, Object>();
+            TopDoctors = appointmentRepo.findTopDoctor();
+            //System.out.println(appointments.toString());
+            return GenericResponse.getSuccessResponse(TopDoctors);
+        } catch (InvalidSessionException | UnauthorizedException e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(
+                    "Something went wrong!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+  //Highest No. Of Appointments -- So as to give Discount in future on medicines
+    @RequestMapping("/ValublePatient")
+    public ResponseEntity<GenericResponse> ValuablePatient(@CookieValue(name = "SESSION_ID", required = false)String sessionId) {
+                                                              
+      
+        try {SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                .orElseThrow(InvalidSessionException::new);
+        if (session.getPerson().getRole().getRoleId() != 1) {
+            throw new UnauthorizedException("Admin can only access this data");
+            }
+        Map<String ,Object> FreqPatients= new HashMap<String, Object>();
+            FreqPatients = appointmentRepo.findFreqPatient();
+            //System.out.println(appointments.toString());
+            return GenericResponse.getSuccessResponse(FreqPatients);
+        } catch (InvalidSessionException | UnauthorizedException e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return GenericResponse.getFailureResponse(
+                    "Something went wrong!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     @RequestMapping("/AppointmentlistbyDateForAdmin")
     public ResponseEntity<GenericResponse> GetTAppointmentList(@CookieValue(name = "SESSION_ID", required = false) String sessionId,
                                                                @RequestParam String Date) {
