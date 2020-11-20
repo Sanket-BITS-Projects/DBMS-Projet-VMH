@@ -115,6 +115,7 @@ public class RestController {
                     .orElseThrow(InvalidSessionException::new);
 
             PersonEntity person = session.getPerson();
+
             return GenericResponse.getSuccessResponse(person.getAppointmentsByPId());
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();

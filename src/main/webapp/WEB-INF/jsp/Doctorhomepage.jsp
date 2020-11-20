@@ -133,7 +133,7 @@
 
     $.ajax({
         method: "GET",
-        url: "doctorAppointmentHistory",
+        url: "DoctorAppointmentsdone",
         dataType: 'json',
         async: false,
         success: function (response) {

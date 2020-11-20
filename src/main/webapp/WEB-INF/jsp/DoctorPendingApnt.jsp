@@ -166,7 +166,9 @@ window.location.replace("Doctorhomepage")
         document.write("</table>");
     }
 var aid;
+var table = " ";
     function provide() {
+
     aid=event.target.id;
         document.getElementById("myForm").innerHTML = "  <div action=\"/action_page.php\" class=\"form-container\">\n" +
             "    <button type=\"button\" style='width: 10%;margin-left: 90%;\n" +
@@ -174,36 +176,138 @@ var aid;
             "    <h1 style='margin-top: 0;'>Fill Prescription</h1>\n" +
             "\n" +
             "    <label for=\"Advice\"><b>Advice :</b><br></label>\n" +
-            "    <textarea id=Advice placeholder=\"Enter Advice\" name=\"Advice\" rows=6 cols=30 autofocus=autofocus maxlength=200 required></textarea>\n" +
+            "    <textarea id=Advice placeholder=\"Enter Advice\" name=\"Advice\" rows=2 cols=30 autofocus=autofocus maxlength=200 required></textarea>\n" +
             "\n" +
             "    <label for=\"Duration\"><b>Duration :</b><br></label>\n" +
             "    <Input type='text' id=Duration placeholder=\"Enter Duration\" name=\"Duration\" autofocus=autofocus maxlength=20 required>\n" +
             "\n" +
-            "    <button onclick='onSendPres()' class=\"btn\">Send</button>\n" +
-            "  </div>\n";
+            "    <label for=\"Duration\"><b>Medicines :</b><br></label>\n" +
+            "<div style='text-align: right; margin-top: -30px'>"+
+        "<div class=\"tooltip right\">"+
+        "<button class=\"AddAppointmentButton\" id=\"btnAdd\"><font size=5><b>" + "+" + "</b></font></button>"+
+        "<span class=\"tooltiptext\"> Add Medicines</span></div></div>"+
+          "<table id=\"tblData\" style='margin-top: 40px '>\n" +
+            "<thead>\n" +
+            "</thead>\n" +
+            "<tbody>\n" +
+            "</tbody>\n" +
+            "</table>"  +
+            " <label for=\"Duration\"><b>Lab Tests :</b><br></label>\n" +
+            "<div style='text-align: right; margin-top: -30px'>"+
+            "<div class=\"tooltip right\">"+
+            "<button class=\"AddAppointmentButton\" id=\"btnAddtest\"><font size=5><b>" + "+" + "</b></font></button>"+
+            "<span class=\"tooltiptext\"> Add Lab Tests</span></div></div>"+
+            "<table id=\"tblDatatest\" style='margin-top: 40px '>\n" +
+            "<thead>\n" +
+            "</thead>\n" +
+            "<tbody>\n" +
+            "</tbody>\n" +
+            "</table>"  +
+        "    <button onclick='onSendPres()' class=\"btn\">Send</button>\n" +
+        "  </div>\n";
         document.getElementById("myForm").style.display = "block";
-    }
 
-    function onSendPres() {
-        var ad=document.getElementById("Advice").value;
-        var du=document.getElementById("Duration").value;
-        if(ad==="" || du ===""){
-            alert("PLease fill out all the fields");
-        }
-        else{
+        function Add(){
+
+            var options = "";
             $.ajax({
-                method: "POST",
-                url: "givePrescription",
-                data: {appointmentId: result[aid].appointment.id,
-                    description: ad,
-                    duration: du
-                },
+                method: "GET",
+                url: "medicines",
                 dataType: 'json',
                 async: false,
                 success: function (response) {
-                    alert("Prescription Successfully given.")
-                    window.location.reload();
+                    for(var i=0;i<response.result.length; i++){
+                        options = options + ("<option value=\""+response.result[i].mId+"\">"+response.result[i].mName+"</option>");
+                    }
+                    $("#tblData tbody").append(
+                        "<tr>"+
+                        "<td> " +
+                        "<select style='width: 100px; padding: 13;'>\n" +
+                        options +
+                        "  </select>"+
+                        "</td>"+
+                        "<td><input type='text' placeholder='Enter Usage' style='width: 170px; margin: 9;'/></td>"+
+                        "</tr>");
                 }
+            });
+        };
+
+        function Addtest(){
+            var options = "";
+            $.ajax({
+                method: "GET",
+                url: "labTests",
+                dataType: 'json',
+                async: false,
+                success: function (response) {
+                    for(var i=0;i<response.result.length; i++){
+                        options = options + ("<option value=\""+response.result[i].ltId+"\">"+response.result[i].ltName+"</option>");
+                    }
+                    $("#tblDatatest tbody").append(
+                        "<tr>"+
+                        "<td> " +
+                        "<select style='width: 150px; padding: 7;'>\n" +
+                        options +
+                        "  </select>"+
+                        "</td>"+
+                        "</tr>");
+                }
+            });
+        };
+        $(function(){
+            $("#btnAdd").bind("click", Add);
+            $("#btnAddtest").bind("click", Addtest);
+        });
+
+
+    }
+
+
+
+    function onSendPres() {
+        var prescription = {};
+        var arrayofmedicines = [];
+        var arrayoftests = [];
+        var ad=document.getElementById("Advice").value;
+        var du=document.getElementById("Duration").value;
+
+        $("#tblData tbody tr").each(function (row, tr) {
+            let medicines = {};
+            medicines.mId = $(tr).find('td:eq(0)')[0].childNodes[1].value;
+            medicines.usage = $(tr).find('td:eq(1)')[0].childNodes[0].value;
+            arrayofmedicines.push(medicines);
+        });
+        $("#tblDatatest tbody tr").each(function (row, tr) {
+            let tests = {};
+            tests.ltId = $(tr).find('td:eq(0)')[0].childNodes[1].value;
+            arrayoftests.push(tests);
+        });
+
+        if(ad==="" || du ===""){
+            alert("PLease fill out the fields");
+        }
+
+        else{
+
+            prescription.aId = result[0].aId;
+            prescription.description = ad;
+            prescription.courseDuration = du;
+            prescription.prescribedMedicineEntities = arrayofmedicines;
+            prescription.labTestsEntities = arrayoftests;
+
+            var settings = {
+                "url": "/givePrescription",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify(prescription),
+            };
+               console.log(settings);
+            $.ajax(settings).done(function (response) {
+                alert("Prescription Successfully given.");
+                window.location.reload();
             });
         }
     }

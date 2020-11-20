@@ -121,8 +121,10 @@ public class PrescriptionEntity {
         this.medicinesByPrescId = medicinesByPrescId;
     }
 
-    @OneToOne(mappedBy = "prescriptionByAId")
+
     @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "A_ID", referencedColumnName = "A_ID",insertable = false ,updatable = false)
     public AppointmentEntity getAppointmentByAId() {
         return appointmentByAId;
     }

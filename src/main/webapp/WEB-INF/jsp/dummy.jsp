@@ -9,7 +9,7 @@
 
 <button id="btnAdd"></button>
 <button id="btnsave"></button>
- <table id="tblData">
+<table id="tblData">
 <thead>
 <tr>
     <th>Name</th>
@@ -67,7 +67,6 @@
     $(function(){
         $("#btnAdd").bind("click", Add);
         $("#btnsave").bind("click", save);
-
     });
 
     console.log(prescription);
