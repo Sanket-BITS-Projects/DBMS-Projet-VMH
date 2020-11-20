@@ -130,22 +130,6 @@ CREATE TABLE Doctor
     FOREIGN KEY (d_id) REFERENCES Person (p_id)
 );
 
-INSERT INTO PERSON(P_NAME, DOB, PHONE, EMAIL, PASSWORD, ADDRESS, ROLE_ID)
-VALUES ('Dr. Ramesh', '1990-05-11', '9876543210', 'dr.ramesh@email.com', 'password', 'Dummy Address', 2);
-INSERT INTO DOCTOR(FEES, D_ID)
-VALUES (300, SELECT P_ID FROM PERSON WHERE email = 'dr.ramesh@email.com');
-INSERT INTO DOCTOR_SPECIALITY(SP_ID, D_ID)
-VALUES (SELECT SP_ID FROM SPECIALIZATION WHERE speciality = 'Physician',
-        SELECT P_ID FROM PERSON WHERE email = 'dr.ramesh@email.com');
-
-INSERT INTO PERSON(P_NAME, DOB, PHONE, EMAIL, PASSWORD, ADDRESS, ROLE_ID)
-VALUES ('Dr. Abhishek', '1999-05-16', '9876543210', 'dr.abhishek@email.com', 'password', 'Dummy Address', 2);
-INSERT INTO DOCTOR(FEES, D_ID)
-VALUES (500, SELECT P_ID FROM PERSON WHERE email = 'dr.abhishek@email.com');
-INSERT INTO DOCTOR_SPECIALITY(SP_ID, D_ID)
-VALUES (SELECT SP_ID FROM SPECIALIZATION WHERE speciality = 'Physician',
-        SELECT P_ID FROM PERSON WHERE email = 'dr.abhishek@email.com');
-
 CREATE TABLE Appointment
 (
     a_id          INT AUTO_INCREMENT,
@@ -200,3 +184,19 @@ CREATE TABLE Prescribed_Lab_Tests
     FOREIGN KEY (lt_id) REFERENCES Lab_Tests (lt_id),
     FOREIGN KEY (presc_id) REFERENCES Prescription (presc_id)
 );
+
+INSERT INTO PERSON(P_NAME, DOB, PHONE, EMAIL, PASSWORD, ADDRESS, ROLE_ID)
+VALUES ('Dr. Ramesh', '1990-05-11', '9876543210', 'dr.ramesh@email.com', 'password', 'Dummy Address', 2);
+INSERT INTO DOCTOR(FEES, D_ID)
+VALUES (300, SELECT P_ID FROM PERSON WHERE email = 'dr.ramesh@email.com');
+INSERT INTO DOCTOR_SPECIALITY(SP_ID, D_ID)
+VALUES (SELECT SP_ID FROM SPECIALIZATION WHERE speciality = 'Physician',
+        SELECT P_ID FROM PERSON WHERE email = 'dr.ramesh@email.com');
+
+INSERT INTO PERSON(P_NAME, DOB, PHONE, EMAIL, PASSWORD, ADDRESS, ROLE_ID)
+VALUES ('Dr. Abhishek', '1999-05-16', '9876543210', 'dr.abhishek@email.com', 'password', 'Dummy Address', 2);
+INSERT INTO DOCTOR(FEES, D_ID)
+VALUES (500, SELECT P_ID FROM PERSON WHERE email = 'dr.abhishek@email.com');
+INSERT INTO DOCTOR_SPECIALITY(SP_ID, D_ID)
+VALUES (SELECT SP_ID FROM SPECIALIZATION WHERE speciality = 'Physician',
+        SELECT P_ID FROM PERSON WHERE email = 'dr.abhishek@email.com');

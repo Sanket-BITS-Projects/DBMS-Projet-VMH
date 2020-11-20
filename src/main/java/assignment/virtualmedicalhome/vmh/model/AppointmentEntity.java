@@ -158,8 +158,7 @@ public class AppointmentEntity {
         this.doctor = doctor;
     }
 
-    @OneToOne
-    @JoinColumn(name = "A_ID", referencedColumnName = "A_ID")
+    @OneToOne(mappedBy = "appointmentByAId")
     public PrescriptionEntity getPrescriptionByAId() {
         return prescriptionByAId;
     }

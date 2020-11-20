@@ -4,13 +4,12 @@ import assignment.virtualmedicalhome.vmh.model.*;
 import assignment.virtualmedicalhome.vmh.repository.*;
 import assignment.virtualmedicalhome.vmh.response.GenericResponse;
 import assignment.virtualmedicalhome.vmh.response.InvalidSessionException;
+import assignment.virtualmedicalhome.vmh.response.PrescriptionRequestBody;
 import assignment.virtualmedicalhome.vmh.response.UnauthorizedException;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +30,9 @@ public class RestController {
     private final DoctorRepository docRepo;
     private final IllnessReposirory illRepo;
     private final MedicineRepository medRepo;
+    private final LabTestRepository labRepo;
+    private final PrescriptionRepository prescRepo;
+    private final PrescribedMedicineRepository prescMedRepo;
 
     public RestController(
             PersonRepository repository,
@@ -40,7 +42,10 @@ public class RestController {
             SpecializationRepository specialRepo,
             DoctorRepository docRepo,
             IllnessReposirory illRepo,
-            MedicineRepository medicineRepository) {
+            MedicineRepository medicineRepository,
+            LabTestRepository labRepo,
+            PrescriptionRepository prescRepo,
+            PrescribedMedicineRepository prescMedRep) {
         this.repository = repository;
         this.authRepo = authRepo;
         this.appointmentRepo = appointmentRepo;
@@ -49,6 +54,9 @@ public class RestController {
         this.docRepo = docRepo;
         this.illRepo = illRepo;
         this.medRepo = medicineRepository;
+        this.labRepo = labRepo;
+        this.prescRepo = prescRepo;
+        this.prescMedRepo = prescMedRep;
     }
 
     @PostMapping("/SearchDoctor")
@@ -73,14 +81,16 @@ public class RestController {
             );
         }
     }
+
     @PostMapping("/GetDoctorWithSpecialization")
     public ResponseEntity<GenericResponse> searchDoctorForAdmin(@CookieValue(name = "SESSION_ID", required = false) String sessionId,
-                                                        @RequestParam String spName) {
+                                                                @RequestParam String spName) {
         try {
-        	 SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
-                     .orElseThrow(InvalidSessionException::new);
-             if (session.getPerson().getRole().getRoleId() != 1) {
-                 throw new UnauthorizedException("Admin can only access this data");}
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            if (session.getPerson().getRole().getRoleId() != 1) {
+                throw new UnauthorizedException("Admin can only access this data");
+            }
             SpecializationEntity specialization = specialRepo.getSpecializationEntityBySpeciality(spName);
             if (specialization == null) {
                 return GenericResponse.getFailureResponse("Specialization not found", HttpStatus.BAD_REQUEST);
@@ -105,6 +115,7 @@ public class RestController {
                     .orElseThrow(InvalidSessionException::new);
 
             PersonEntity person = session.getPerson();
+
             return GenericResponse.getSuccessResponse(person.getAppointmentsByPId());
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();
@@ -145,7 +156,7 @@ public class RestController {
             );
         }
     }
-    
+
     @RequestMapping("/PatientLists")
     public ResponseEntity<GenericResponse> patientList(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
         try {
@@ -154,8 +165,8 @@ public class RestController {
             if (session.getPerson().getRole().getRoleId() != 1) {
                 throw new UnauthorizedException("Admin can only access this data");
             }
-            ArrayList<PersonEntity> oPersonEntity = repository.findAllPatients();  
-            
+            ArrayList<PersonEntity> oPersonEntity = repository.findAllPatients();
+
             return GenericResponse.getSuccessResponse(oPersonEntity);
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();
@@ -168,7 +179,7 @@ public class RestController {
             );
         }
     }
-    
+
     @RequestMapping("/PatientCount")
     public ResponseEntity<GenericResponse> patientCount(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
         try {
@@ -177,7 +188,7 @@ public class RestController {
             if (session.getPerson().getRole().getRoleId() != 1) {
                 throw new UnauthorizedException("Admin can only access this data");
             }
-            
+
             int Count = repository.CountAllPatients();
             return GenericResponse.getSuccessResponse(Count);
         } catch (InvalidSessionException | UnauthorizedException e) {
@@ -190,9 +201,9 @@ public class RestController {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-		
+
     }
-    
+
     @RequestMapping("/DoctorLists")
     public ResponseEntity<GenericResponse> DoctorList(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
         try {
@@ -201,9 +212,8 @@ public class RestController {
             if (session.getPerson().getRole().getRoleId() != 1) {
                 throw new UnauthorizedException("Admin can only access this data");
             }
-            ArrayList<PersonEntity> oPersonEntity = repository.findAllDoctors();  
-            int Count = repository.CountAllDoctors();
-            return GenericResponse.getSuccessResponse(oPersonEntity);
+            ArrayList<PersonEntity> doctors = repository.findAllDoctors();
+            return GenericResponse.getSuccessResponse(doctors);
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();
             return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -215,6 +225,7 @@ public class RestController {
             );
         }
     }
+
     @RequestMapping("/DoctorCount")
     public ResponseEntity<GenericResponse> DoctorCount(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
         try {
@@ -222,7 +233,7 @@ public class RestController {
                     .orElseThrow(InvalidSessionException::new);
             if (session.getPerson().getRole().getRoleId() != 1) {
                 throw new UnauthorizedException("Admin can only access this data");
-            } 
+            }
             int Count = repository.CountAllDoctors();
             return GenericResponse.getSuccessResponse(Count);
         } catch (InvalidSessionException | UnauthorizedException e) {
@@ -236,20 +247,20 @@ public class RestController {
             );
         }
     }
-  //App revenue for today which is 15% comission on each doctor fee collected on current date
+
+    //App revenue for today which is 15% comission on each doctor fee collected on current date
     @RequestMapping("/AppRevenue")
-    public ResponseEntity<GenericResponse> AppRevenue(@CookieValue(name = "SESSION_ID", required = false)String sessionId) {
-                                                              
-      
-        try {SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
-                .orElseThrow(InvalidSessionException::new);
-        if (session.getPerson().getRole().getRoleId() != 1) {
-            throw new UnauthorizedException("Admin can only access this data");
+    public ResponseEntity<GenericResponse> AppRevenue(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+
+
+        try {
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            if (session.getPerson().getRole().getRoleId() != 1) {
+                throw new UnauthorizedException("Admin can only access this data");
             }
-        Map<String ,Object> Apprevenue = new HashMap<String, Object>();
-        Apprevenue = appointmentRepo.findRevenue();
-            //System.out.println(appointments.toString());
-            return GenericResponse.getSuccessResponse(Apprevenue);
+            Map<String, Object> appRevenue = appointmentRepo.findRevenue();
+            return GenericResponse.getSuccessResponse(appRevenue);
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();
             return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -261,20 +272,20 @@ public class RestController {
             );
         }
     }
+
     //Highest No. Of Appointments for Patients for Doctor -- So as to get more comission on fees
     @RequestMapping("TopDoctor")
-    public ResponseEntity<GenericResponse> TopDoctor(@CookieValue(name = "SESSION_ID", required = false)String sessionId) {
-                                                              
-      
-        try {SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
-                .orElseThrow(InvalidSessionException::new);
-        if (session.getPerson().getRole().getRoleId() != 1) {
-            throw new UnauthorizedException("Admin can only access this data");
+    public ResponseEntity<GenericResponse> TopDoctor(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+
+
+        try {
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            if (session.getPerson().getRole().getRoleId() != 1) {
+                throw new UnauthorizedException("Admin can only access this data");
             }
-        Map<String ,Object> TopDoctors= new HashMap<String, Object>();
-            TopDoctors = appointmentRepo.findTopDoctor();
-            //System.out.println(appointments.toString());
-            return GenericResponse.getSuccessResponse(TopDoctors);
+            Map<String, Object> topDoctors = appointmentRepo.findTopDoctor();
+            return GenericResponse.getSuccessResponse(topDoctors);
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();
             return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -286,20 +297,20 @@ public class RestController {
             );
         }
     }
-  //Highest No. Of Appointments -- So as to give Discount in future on medicines
+
+    //Highest No. Of Appointments -- So as to give Discount in future on medicines
     @RequestMapping("/ValublePatient")
-    public ResponseEntity<GenericResponse> ValuablePatient(@CookieValue(name = "SESSION_ID", required = false)String sessionId) {
-                                                              
-      
-        try {SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
-                .orElseThrow(InvalidSessionException::new);
-        if (session.getPerson().getRole().getRoleId() != 1) {
-            throw new UnauthorizedException("Admin can only access this data");
+    public ResponseEntity<GenericResponse> ValuablePatient(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+
+
+        try {
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            if (session.getPerson().getRole().getRoleId() != 1) {
+                throw new UnauthorizedException("Admin can only access this data");
             }
-        Map<String ,Object> FreqPatients= new HashMap<String, Object>();
-            FreqPatients = appointmentRepo.findFreqPatient();
-            //System.out.println(appointments.toString());
-            return GenericResponse.getSuccessResponse(FreqPatients);
+            Map<String, Object> freqPatients = appointmentRepo.findFreqPatient();
+            return GenericResponse.getSuccessResponse(freqPatients);
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();
             return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -324,13 +335,13 @@ public class RestController {
                     "Unknown date format! Date format should be dd-MM-yyyy",
                     HttpStatus.BAD_REQUEST);
         }
-        try {SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
-                .orElseThrow(InvalidSessionException::new);
-        if (session.getPerson().getRole().getRoleId() != 1) {
-            throw new UnauthorizedException("Admin can only access this data");
+        try {
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+            if (session.getPerson().getRole().getRoleId() != 1) {
+                throw new UnauthorizedException("Admin can only access this data");
             }
-            ArrayList<AppointmentEntity> appointments = new ArrayList<AppointmentEntity>();
-             appointments = appointmentRepo.findByTime(app_date);
+            ArrayList<AppointmentEntity> appointments = appointmentRepo.findByTime(app_date);
             System.out.println(appointments.toString());
             return GenericResponse.getSuccessResponse(appointments);
         } catch (InvalidSessionException | UnauthorizedException e) {
@@ -582,44 +593,43 @@ public class RestController {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-    }
+    }*/
 
-    @RequestMapping("/givePrescription")
+    @PostMapping("/givePrescription")
     public ResponseEntity<GenericResponse> givePrescription(
             @CookieValue("SESSION_ID") String sessionId,
-            @RequestParam int appointmentId,
-            @RequestParam String description,
-            @RequestParam int duration
+            @RequestBody PrescriptionRequestBody prescBody
     ) {
         try {
-            Authentication auth = personService.getAuthentication(authRepo, sessionId);
-            Person person = personService.getAuthorizedDoctor(repository, auth);
-            Appointment appointment = appointmentRepo.findById(appointmentId).orElse(null);
-            if (appointment == null || appointment.getDoctor() != person.getId()) {
-                return GenericResponse.getFailureResponse(
-                        "Appointment not found or you are not authorized",
-                        HttpStatus.FORBIDDEN
-                );
+            SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
+                    .orElseThrow(InvalidSessionException::new);
+
+            if (session.getPerson().getRoleId() != 2) {
+                throw new UnauthorizedException("Only doctor can give prescription");
             }
-            Prescription prescription = new Prescription();
-            prescription.setAppointmentId(appointmentId);
-            prescription.setCourseDuration(duration);
-            prescription.setDescription(description);
-            prescription = presRepo.save(prescription);
-            appointment.setDoctorAccept(1);
-            Person patient = repository.findById(appointment.getPatient()).get();
-            Person doctor = repository.findById(appointment.getDoctor()).get();
-            int fees = commissionRepo.findByDoctorId(doctor.getId()).getFees();
-            PeopleWallet patientWallet = new PeopleWallet();
-            patientWallet.setPersonId(patient.getId());
-            patientWallet.setBalance(walletRepo.findById(patient.getId()).get().getBalance() - fees);
-            walletRepo.save(patientWallet);
-            PeopleWallet doctorWallet = new PeopleWallet();
-            doctorWallet.setPersonId(doctor.getId());
-            doctorWallet.setBalance(walletRepo.findById(doctor.getId()).get().getBalance() + fees);
-            walletRepo.save(doctorWallet);
+            PrescriptionEntity presc = new PrescriptionEntity(prescBody.getaId(), prescBody.getDescription(), prescBody.getCourseDuration());
+            presc.setLabTestsByPrescId(prescBody.getLabTestsEntities());
+            PrescriptionEntity savedPresc = prescRepo.save(presc);
+
+            HashSet<PrescribedMedicineEntity> medicines = prescBody.getPrescribedMedicineEntities();
+            medicines.forEach(prescribedMedicineEntity -> prescribedMedicineEntity.setPrescId(savedPresc.getPrescId()));
+            prescMedRepo.saveAll(medicines);
+
+            AppointmentEntity appointment = appointmentRepo.findById(prescBody.getaId()).orElseThrow(IllegalStateException::new);
+            appointment.setDoctorAccept('1');
             appointmentRepo.save(appointment);
-            return GenericResponse.getSuccessResponse(prescription);
+
+            DoctorEntity doctor = appointment.getDoctor();
+            int doctorFees = doctor.getFees();
+            PersonEntity patient = appointment.getPatient();
+            PersonEntity doctorAsPerson = doctor.getPersonByDId();
+            patient.setBalance(patient.getBalance() - doctorFees);
+            doctorAsPerson.setBalance(doctorAsPerson.getBalance() + doctorFees);
+
+            repository.save(patient);
+            repository.save(doctorAsPerson);
+
+            return GenericResponse.getSuccessResponse(savedPresc);
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();
             return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -630,7 +640,7 @@ public class RestController {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-    }*/
+    }
 
 
     @PostMapping("/NewAppointment")
@@ -645,10 +655,10 @@ public class RestController {
         try {
             SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
                     .orElseThrow(InvalidSessionException::new);
-             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-             IllnessEntity illness = new IllnessEntity(0, Title, Description);
-             illness = illRepo.save(illness);
-             AppointmentEntity appointment = new AppointmentEntity(0,formatter.parse(Appointment_Date),new Date(),'0',session.getpId(),illness.getiId(),DoctorID);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            IllnessEntity illness = new IllnessEntity(0, Title, Description);
+            illness = illRepo.save(illness);
+            AppointmentEntity appointment = new AppointmentEntity(0, formatter.parse(Appointment_Date), new Date(), '0', session.getpId(), illness.getiId(), DoctorID);
             appointment = appointmentRepo.save(appointment);
             appointment.setIllnessByIId(illness);
             return GenericResponse.getSuccessResponse(appointment);
@@ -669,6 +679,7 @@ public class RestController {
                 HttpStatus.BAD_REQUEST
         );
     }
+
     @RequestMapping("/doctorAppointmentsPending")
     public ResponseEntity<GenericResponse> getNewDoctorAppointments(
             @CookieValue("SESSION_ID") String sessionId
@@ -768,7 +779,7 @@ public class RestController {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             RoleEntity userRole = roleRepo.findRoleEntityByRoleName("USER");
-            PersonEntity person = savePerson(name, email, phone, dob, password, address,formatter,userRole);
+            PersonEntity person = savePerson(name, email, phone, dob, password, address, formatter, userRole);
             return GenericResponse.getSuccessResponse(person);
         } catch (ParseException parseException) {
             error = "Unknown date format! Date format should be dd-MM-yyyy";
@@ -786,12 +797,12 @@ public class RestController {
         return GenericResponse.getFailureResponse(error, status);
     }
 
-    private PersonEntity savePerson(@RequestParam String name, @RequestParam String email, @RequestParam String phone, @RequestParam String dob, @RequestParam String password,@RequestParam String address, SimpleDateFormat formatter,RoleEntity userRole) throws ParseException {
+    private PersonEntity savePerson(@RequestParam String name, @RequestParam String email, @RequestParam String phone, @RequestParam String dob, @RequestParam String password, @RequestParam String address, SimpleDateFormat formatter, RoleEntity userRole) throws ParseException {
         if (repository.findByEmail(email) != null) {
             throw new UnsupportedOperationException("User with email id already exists!");
         }
-        PersonEntity person = new PersonEntity(0, name, email, phone, formatter.parse(dob),password,2000,address,userRole.getRoleId());
-         return repository.save(person);
+        PersonEntity person = new PersonEntity(0, name, email, phone, formatter.parse(dob), password, 2000, address, userRole.getRoleId());
+        return repository.save(person);
 
     }
 
@@ -809,10 +820,11 @@ public class RestController {
     ) {
         String error;
         HttpStatus status;
+        //noinspection RedundantSuppression
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             RoleEntity userRole = roleRepo.findRoleEntityByRoleName("DOCTOR");
-            PersonEntity person = savePerson(name, email, phone, dob, password, address,formatter,userRole);
+            PersonEntity person = savePerson(name, email, phone, dob, password, address, formatter, userRole);
             SpecializationEntity specialization = specialRepo.findById(specializationId).orElse(null);
             if (specialization == null) {
                 throw new IllegalArgumentException("Specialization not found with id " + specializationId);
@@ -825,9 +837,9 @@ public class RestController {
             doctor.setSpecializations(arrayspecialization);
             DoctorEntity finaldoctor = docRepo.save(doctor);
             finaldoctor.setPersonByDId(person);
-            return GenericResponse.getSuccessResponse(new Object(){
+            //noinspection unused
+            return GenericResponse.getSuccessResponse(new Object() {
                 public final DoctorEntity doctor = finaldoctor;
-
             });
         } catch (ParseException parseException) {
             error = "Unknown date format! Date format should be dd-MM-yyyy";
@@ -847,10 +859,19 @@ public class RestController {
 
     @RequestMapping("/medicines")
     public ResponseEntity<GenericResponse> getAllMedicines(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+        return getAllFromATable(sessionId, medRepo);
+    }
+
+    @RequestMapping("/labTests")
+    public ResponseEntity<GenericResponse> getAllLabTests(@CookieValue(name = "SESSION_ID", required = false) String sessionId) {
+        return getAllFromATable(sessionId, labRepo);
+    }
+
+    private ResponseEntity<GenericResponse> getAllFromATable(String sessionId, CrudRepository<?, ?> repo) {
         try {
             authRepo.getSessionEntityBySessionId(sessionId)
                     .orElseThrow(InvalidSessionException::new);
-            return GenericResponse.getSuccessResponse(medRepo.findAll());
+            return GenericResponse.getSuccessResponse(repo.findAll());
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();
             return GenericResponse.getFailureResponse(e.getMessage(), HttpStatus.UNAUTHORIZED);

@@ -1,7 +1,6 @@
 package assignment.virtualmedicalhome.vmh.model;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -9,7 +8,6 @@ import java.util.Objects;
 public class LabTestsEntity {
     private int ltId;
     private String ltName;
-    private Collection<PrescriptionEntity> prescriptionsByLtId;
 
     @Id
     @Column(name = "LT_ID")
@@ -43,14 +41,5 @@ public class LabTestsEntity {
     @Override
     public int hashCode() {
         return Objects.hash(ltId, ltName);
-    }
-
-    @ManyToMany(mappedBy = "labTestsByPrescId")
-    public Collection<PrescriptionEntity> getPrescriptionsByLtId() {
-        return prescriptionsByLtId;
-    }
-
-    public void setPrescriptionsByLtId(Collection<PrescriptionEntity> prescriptionsByLtId) {
-        this.prescriptionsByLtId = prescriptionsByLtId;
     }
 }

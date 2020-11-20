@@ -236,12 +236,12 @@ var table = " ";
             var options = "";
             $.ajax({
                 method: "GET",
-                url: "medicines",
+                url: "labTests",
                 dataType: 'json',
                 async: false,
                 success: function (response) {
                     for(var i=0;i<response.result.length; i++){
-                        options = options + ("<option value=\""+response.result[i].mId+"\">"+response.result[i].mName+"</option>");
+                        options = options + ("<option value=\""+response.result[i].ltId+"\">"+response.result[i].ltName+"</option>");
                     }
                     $("#tblDatatest tbody").append(
                         "<tr>"+
@@ -265,25 +265,49 @@ var table = " ";
 
 
     function onSendPres() {
+        var prescription = {};
+        var arrayofmedicines = [];
+        var arrayoftests = [];
         var ad=document.getElementById("Advice").value;
         var du=document.getElementById("Duration").value;
+
+        $("#tblData tbody tr").each(function (row, tr) {
+            let medicines = {};
+            medicines.mId = $(tr).find('td:eq(0)')[0].childNodes[1].value;
+            medicines.usage = $(tr).find('td:eq(1)')[0].childNodes[0].value;
+            arrayofmedicines.push(medicines);
+        });
+        $("#tblDatatest tbody tr").each(function (row, tr) {
+            let tests = {};
+            tests.ltId = $(tr).find('td:eq(0)')[0].childNodes[1].value;
+            arrayoftests.push(tests);
+        });
+
         if(ad==="" || du ===""){
             alert("PLease fill out the fields");
         }
+
         else{
-            $.ajax({
-                method: "POST",
-                url: "givePrescription",
-                data: {appointmentId: result[aid].appointment.id,
-                    description: ad,
-                    duration: du
+
+            prescription.aId = result[0].aId;
+            prescription.description = ad;
+            prescription.courseDuration = du;
+            prescription.prescribedMedicineEntities = arrayofmedicines;
+            prescription.labTestsEntities = arrayoftests;
+
+            var settings = {
+                "url": "/givePrescription",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
                 },
-                dataType: 'json',
-                async: false,
-                success: function (response) {
-                    alert("Prescription Successfully given.")
-                    window.location.reload();
-                }
+                "data": JSON.stringify(prescription),
+            };
+               console.log(settings);
+            $.ajax(settings).done(function (response) {
+                alert("Prescription Successfully given.");
+                window.location.reload();
             });
         }
     }
