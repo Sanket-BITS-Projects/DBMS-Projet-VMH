@@ -54,6 +54,8 @@
 
 /*------------------------- 1. Core Css -------------------*/
 
+@import "AdminPageStyle.css";
+
 .page-container {
     width: 100%;
     height: 100%;
