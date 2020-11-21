@@ -17,7 +17,7 @@
         <div style="margin-left:20%">
 
             <div class="w3-container w3-teal">
-                <h1>Welcome to Virtual Medical Home</h1>
+                <h1>Welcome to LifePlus Cares</h1>
                 <h2>Nice to see you.</h2>
                 <p>You can get all the data which you want on this page.</p>
             </div>

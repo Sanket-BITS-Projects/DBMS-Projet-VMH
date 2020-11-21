@@ -144,7 +144,9 @@
     document.write("<table id='AppointmentTable'" + "><tr><th>" + "Patient Name" + "</th><th>" + "Appointment Date" + "</th> <th>Fees Collected</th> <th>Illness</th> <th>Prescription</th></tr>");
     if (Object.keys(apntData).length) {
         Object.keys(apntData).forEach(function (i) {
-            document.write("<tr><td>" + apntData[i].patient.name + "</td><td>" + appointmentdate(apntData[i].appointment.time) + "</td><td>" + apntData[0].commission.fees + "</td><td>" + "<Button id=" + i + " onclick=\"onillness()\">Show illness</button>" + "</td><td>" + "<Button id=" + i + " onclick=\"on()\">Show prescription</button>" + "</td></tr>");
+            document.write("<tr><td>" + apntData[i].patient.pName + "</td><td>" + appointmentdate(apntData[i].aDateTime
+
+            ) + "</td><td>" + apntData[0].doctor.fees + "</td><td>" + "<Button id=" + i + " onclick=\"onillness()\">Show illness</button>" + "</td><td>" + "<Button id=" + i + " onclick=\"on()\">Show prescription</button>" + "</td></tr>");
         });
     } else {
         document.write("<tr><td colspan=6 style='text-align: center;'>" + "No Previous Appointment History." + "</td></tr>");
@@ -178,19 +180,15 @@
         document.getElementById("overlay").innerHTML = "    <div id=\"text\">\n" +
             "        <TABLE border=\"0\" style=\"color: white;\" cellpadding=\"5px\">\n" +
             "            <tr>\n" +
-            "                <td>" + apntData[event.target.id].patient.name + "</td>\n" +
+            "                <td>" + apntData[event.target.id].patient.pName + "</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Virtual Medical Home</td>\n" +
+            "                <td>LifePlus Cares</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Appointment. No. " + apntData[event.target.id].appointment.id + "</td>\n" +
-            "                <td></td>\n" +
-            "            </tr>\n" +
-            "            <tr>\n" +
-            "                <td></td>\n" +
+            "                <td>Appointment. No. " + apntData[event.target.id].aId + "</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
@@ -198,41 +196,58 @@
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Doctor Name: " + apntData[event.target.id].doctor.name + "</td><td></td>\n" +
+            "                <td></td>\n" +
+            "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Date: " + appointmentdate(apntData[event.target.id].appointment.time) + "</td><td></td>\n" +
+            "                <td>Doctor Name: " + apntData[event.target.id].doctor.personByDId.pName + "</td><td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Illness Reason: " + apntData[event.target.id].illness.title + "</td><td></td>\n" +
+            "                <td>Date: " + appointmentdate(apntData[event.target.id].aDateTime) + "</td><td></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td>Illness Reason: " + apntData[event.target.id].illnessByIId.title + "</td><td></td>\n" +
             "            </tr>\n" +
             "        </TABLE>\n" +
             "        <br>\n" +
             "        \n" +
-            "<p style='margin: 0 0 0 9; font-size: 18; font-weight: bold;'>Illness Description:</p><p color=white style='font-size: 15px;text-align: center;'>" +
-            apntData[event.target.id].illness.description + "</p>"
+            "<p style='margin: 0 0 0 9; font-size: 18; font-weight: bold;'>Illness Description:</p><p color=white style='font-size: 15px;text-align: left;'>" +
+            apntData[event.target.id].illnessByIId.description + "</p>"
         "    </div>\n";
         document.getElementById("overlay").style.display = "block";
     }
 
 
     function on() {
+        var labtests='';
+        if(apntData[event.target.id].prescriptionByAId.labTestsByPrescId.length) {
+            for (lt of apntData[event.target.id].prescriptionByAId.labTestsByPrescId) {
+                labtests += lt.ltName + "<br>";
+            }
+        }else{
+            labtests="None."
+        }
+        var medicines='';
+        if(apntData[event.target.id].prescriptionByAId.medicinesByPrescId.length)
+        {
+            for ( lt of apntData[event.target.id].prescriptionByAId.medicinesByPrescId) {
+                medicines+=lt.mName + "<br>";
+            }
+        }else {
+            medicines="None."
+        }
         document.getElementById("overlay").innerHTML = "    <div id=\"text\">\n" +
             "        <TABLE border=\"0\" style=\"color: white;\" cellpadding=\"5px\">\n" +
             "            <tr>\n" +
-            "                <td>" + apntData[event.target.id].doctor.name + "</td>\n" +
+            "                <td>" + apntData[event.target.id].doctor.personByDId.pName + "</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Virtual Medical Home</td>\n" +
+            "                <td>LifePlus Cares</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Appointment. No. " + apntData[event.target.id].appointment.id + "</td>\n" +
-            "                <td></td>\n" +
-            "            </tr>\n" +
-            "            <tr>\n" +
-            "                <td></td>\n" +
+            "                <td>Appointment. No. " + apntData[event.target.id].aId + "</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
@@ -240,16 +255,26 @@
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Patient Name: " + apntData[event.target.id].patient.name + "</td><td></td>\n" +
+            "                <td></td>\n" +
+            "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Date: " + appointmentdate(apntData[event.target.id].appointment.time) + "</td><td></td>\n" +
+            "                <td>Patient Name: " + apntData[event.target.id].patient.pName + "</td><td></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td>Date: " + appointmentdate(apntData[event.target.id].aDateTime) + "</td><td></td>\n" +
             "            </tr>\n" +
             "        </TABLE>\n" +
             "        <br>\n" +
             "        \n" +
-            "<p style='margin: 0 0 0 9; font-size: 18; font-weight: bold;'>Prescription:</p><p color=white style='font-size: 15px;text-align: center;'>" +
-            apntData[event.target.id].prescription.description + "</p>"
+            "<p style='margin: 0 0 0 9; font-size: 18; font-weight: bold;'>Prescription:</p><p color=white style='font-size: 15px;text-align: left;'>" +
+            apntData[event.target.id].prescriptionByAId.description + "<br>Course Duration: " +
+            apntData[event.target.id].prescriptionByAId.courseDuration +
+            "<p><div style='font-size: 15px;'>Medicines:</div><div style='font-size: 14px;'>"+
+            medicines  +
+            "</div><br><div style='font-size: 15px;'>Lab Tests:</div><div style='font-size: 14px;'>"+
+            labtests +
+            "</p></div></p>"+
         "    </div>\n";
         document.getElementById("overlay").style.display = "block";
     }

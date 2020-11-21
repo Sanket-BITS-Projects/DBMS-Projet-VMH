@@ -2,7 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Virtual Medical Home</title>
+    <title>LifePlus Cares</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/loginstyle.css">
     <script src="${pageContext.request.contextPath}/resources/js/Doctorformvalidation.js"></script>
     <script src="${pageContext.request.contextPath}/resources/js/jquery-3.5.1.min.js"></script>

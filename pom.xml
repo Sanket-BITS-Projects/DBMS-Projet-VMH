@@ -13,7 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>vmh</name>
-    <description>Virtual Medical Home</description>
+    <description>LifePlus Cares</description>
 
     <properties>
         <java.version>1.8</java.version>

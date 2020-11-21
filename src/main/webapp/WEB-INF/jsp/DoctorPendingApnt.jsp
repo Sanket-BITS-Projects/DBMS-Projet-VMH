@@ -179,9 +179,12 @@ var table = " ";
             "    <textarea id=Advice placeholder=\"Enter Advice\" name=\"Advice\" rows=2 cols=30 autofocus=autofocus maxlength=200 required></textarea>\n" +
             "\n" +
             "    <label for=\"Duration\"><b>Duration :</b><br></label>\n" +
-            "    <Input type='text' id=Duration placeholder=\"Enter Duration\" name=\"Duration\" autofocus=autofocus maxlength=20 required>\n" +
+            "    <Input type='number' style='    width: 299px;\n" +
+            "    padding: 5px;\n" +
+            "    margin-bottom: 10px;\n" +
+            "    margin-top: 7px;' min='1' max='365' id=Duration placeholder=\"Enter number of days\" name=\"Duration\" autofocus=autofocus maxlength=20 required>\n" +
             "\n" +
-            "    <label for=\"Duration\"><b>Medicines :</b><br></label>\n" +
+            "    <br><label for=\"Duration\"><b>Medicines :</b><br></label>\n" +
             "<div style='text-align: right; margin-top: -30px'>"+
         "<div class=\"tooltip right\">"+
         "<button class=\"AddAppointmentButton\" id=\"btnAdd\"><font size=5><b>" + "+" + "</b></font></button>"+
@@ -326,7 +329,7 @@ var table = " ";
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Center: Virtual Medical Home</td>\n" +
+            "                <td>Center: LifePlus Cares</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +

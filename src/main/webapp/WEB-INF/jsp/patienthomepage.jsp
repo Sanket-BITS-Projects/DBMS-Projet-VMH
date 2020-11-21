@@ -1,11 +1,11 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
 <head>
     <title>Patient Portal</title>
 </head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/PatientHomepageStyle.css">
-<script src="${pageContext.request.contextPath}/resources/js/jquery-3.5.1.min.js"></script>
+<link rel="stylesheet" href="/resources/css/PatientHomepageStyle.css">
+<script src="/resources/js/jquery-3.5.1.min.js"></script>
 <body>
 
 <!-- Sidebar -->
@@ -58,9 +58,9 @@
     function onLogout() {
         $.ajax({
             method: "GET",
-            url: "${pageContext.request.contextPath}/logout",
+            url: "/logout",
             success: function (result) {
-                window.location.replace("${pageContext.request.contextPath}/index.html");
+                window.location.replace("/index.html");
             },
             error: function (err) {
                 console.log(err);
@@ -166,13 +166,13 @@
         }
     });
 
-    document.write("<table id='AppointmentTable'" + "><tr><th>" + "Doctor Name" + "</th><th>" + "Appointment Date" + "</th> <th>Status</th> <th>Amount Paid</th> <th>Prescription</th> <th>Feedback</th> </tr>");
+    document.write("<table id='AppointmentTable'" + "><tr><th>" + "Doctor Name" + "</th><th>" + "Appointment Date" + "</th> <th>Status</th> <th>Amount Paid</th> <th>Prescription</th> </tr>");
     if (Object.keys(apntData).length) {
         Object.keys(apntData).forEach(function (i) {
             if (apntData[i].doctorAccept === "1") {
-                document.write("<tr><td>" + apntData[i].doctor.personByDId.pName + "</td><td>" + apntData[i].aDateTime.substr(0,10) + "</td><td>" + "Done" + "</td><td>" + apntData[i].doctor.fees + "</td><td>" + "<Button id=" + i + " onclick=\"on()\">Show</button>" + "</td><td>" + "<Button id=" + i + " onclick=Feedback(" + (apntData[i].aId) + ")>Provide</button>" + "</td></tr>");
+                document.write("<tr><td>" + apntData[i].doctor.personByDId.pName + "</td><td>" + apntData[i].aDateTime.substr(0,10) + "</td><td>" + "Done" + "</td><td>" + apntData[i].doctor.fees + "</td><td>" + "<Button id=" + i + " onclick=\"on()\">Show</button>" + "</td></tr>");
             } else {
-                document.write("<tr><td>" + apntData[i].doctor.personByDId.pName + "</td><td>" + apntData[i].aDateTime.substr(0,10) + "</td><td>" + "Pending" + "</td><td>" + "--" + "</td><td>" + "--" + "</td><td>" + "--" + "</td></tr>");
+                document.write("<tr><td>" + apntData[i].doctor.personByDId.pName + "</td><td>" + apntData[i].aDateTime.substr(0,10) + "</td><td>" + "Pending" + "</td><td>" + "--" + "</td><td>" + "--" + "</td></tr>");
             }
         });
     } else {
@@ -198,22 +198,35 @@
     }
 
     function on() {
+        var labtests='';
+        if(apntData[event.target.id].prescriptionByAId.labTestsByPrescId.length) {
+            for (lt of apntData[event.target.id].prescriptionByAId.labTestsByPrescId) {
+                labtests += lt.ltName + "<br>";
+            }
+        }else{
+            labtests="None."
+        }
+        var medicines='';
+        if(apntData[event.target.id].prescriptionByAId.medicinesByPrescId.length)
+        {
+            for ( lt of apntData[event.target.id].prescriptionByAId.medicinesByPrescId) {
+                medicines+=lt.mName + "<br>";
+            }
+        }else {
+            medicines="None."
+        }
         document.getElementById("overlay").innerHTML = "    <div id=\"text\">\n" +
             "        <TABLE border=\"0\" style=\"color: white;\" cellpadding=\"5px\">\n" +
             "            <tr>\n" +
-            "                <td>" + apntData[event.target.id].DoctorName + "</td>\n" +
+            "                <td>" + apntData[event.target.id].doctor.personByDId.pName + "</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Virtual Medical Home</td>\n" +
+            "                <td>LifePlus Cares</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Appointment. No. " + apntData[event.target.id].AppointmentId + "</td>\n" +
-            "                <td></td>\n" +
-            "            </tr>\n" +
-            "            <tr>\n" +
-            "                <td></td>\n" +
+            "                <td>Appointment. No. " + apntData[event.target.id].aId + "</td>\n" +
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
@@ -221,20 +234,53 @@
             "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Patient Name: " + patientDet[0].name + "</td><td></td>\n" +
+            "                <td></td>\n" +
+            "                <td></td>\n" +
             "            </tr>\n" +
             "            <tr>\n" +
-            "                <td>Date: " + apntData[event.target.id].AppointmentDate + "</td><td></td>\n" +
+            "                <td>Patient Name: " + patientDet.pName + "</td><td></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td>Date: " + getFormattedDate(apntData[event.target.id].aDateTime) + "</td><td></td>\n" +
             "            </tr>\n" +
             "        </TABLE>\n" +
             "        <br>\n" +
             "        \n" +
-            "<p style='margin: 0 0 0 9; font-size: 18; font-weight: bold;'>Prescription:</p><p color=white style='font-size: 15px;text-align: center;'>" +
-            apntData[event.target.id].prescription + "</p>"
-        "    </div>\n";
+            "<p style='margin: 0 0 0 9; font-size: 18; font-weight: bold;'>Prescription:</p><p color=white style='font-size: 15px;text-align: left;'>" +
+            apntData[event.target.id].prescriptionByAId.description + "<br>Course Duration: " +
+            apntData[event.target.id].prescriptionByAId.courseDuration +
+            "<p><div style='font-size: 15px;'>Medicines:</div><div style='font-size: 14px;'>"+
+            medicines  +
+            "</div><br><div style='font-size: 15px;'>Lab Tests:</div><div style='font-size: 14px;'>"+
+            labtests +
+            "</p></div></p>"+
+            "<table><tr><td>"+
+            "<button id='ordermed' style='background: green;\n" +
+            "    color: white;cursor: grab;" +
+            "    padding: 8px;\n" +
+            "    margin: 10px;' onclick=ordermed()>Order Medicine</button>"+
+            "</td><td><button id='booklabtest' style='background: green;\n" +
+            "    color: white;cursor: grab;" +
+            "    padding: 8px;\n" +
+            "    margin: 10px;' onclick=\"booklabtest()\">Book Lab Test</button></td></tr></table>"+
+            "    </div>\n";
+        if(labtests==="None.")
+        {
+            document.getElementById("booklabtest").disabled = true;
+            document.getElementById("booklabtest").style.background='gray'
+        }
+        if(medicines==="None.") {
+            document.getElementById("ordermed").disabled = true;
+            document.getElementById("ordermed").style.background='gray'
+        }
         document.getElementById("overlay").style.display = "block";
     }
-
+    function ordermed() {
+        alert("Your Medicine(s) have been ordered.")
+    }
+    function booklabtest() {
+        alert('Your Lab Test(s) have been booked.')
+    }
     function off() {
         document.getElementById("overlay").style.display = "none";
     }
@@ -277,7 +323,7 @@
         let desc = document.getElementById("feedbackText").value;
         let apntId = document.getElementById("apntId").value;
         $.ajax({
-            url: "${pageContext.request.contextPath}/giveFeedback",
+            url: "/giveFeedback",
             method: "POST",
             data: {
                 "appointmentId": apntId,
