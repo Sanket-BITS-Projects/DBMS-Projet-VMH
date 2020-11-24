@@ -323,26 +323,15 @@ public class RestController {
         }
     }
 
-    @RequestMapping("/AppointmentlistbyDateForAdmin")
-    public ResponseEntity<GenericResponse> GetTAppointmentList(@CookieValue(name = "SESSION_ID", required = false) String sessionId,
-                                                               @RequestParam String Date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date app_date;
-        try {
-            app_date = formatter.parse(Date);
-        } catch (ParseException parseException) {
-            return GenericResponse.getFailureResponse(
-                    "Unknown date format! Date format should be dd-MM-yyyy",
-                    HttpStatus.BAD_REQUEST);
-        }
+    @RequestMapping("/AppointmentlistForAdmin")
+    public ResponseEntity<GenericResponse> AppointmentlistForAdmin(@CookieValue(name = "SESSION_ID", required = false) String sessionId ) {
         try {
             SessionEntity session = authRepo.getSessionEntityBySessionId(sessionId)
                     .orElseThrow(InvalidSessionException::new);
             if (session.getPerson().getRole().getRoleId() != 1) {
                 throw new UnauthorizedException("Admin can only access this data");
             }
-            ArrayList<AppointmentEntity> appointments = appointmentRepo.findByTime(app_date);
-            System.out.println(appointments.toString());
+            ArrayList<AppointmentEntity> appointments = (ArrayList<AppointmentEntity>) appointmentRepo.findAll();
             return GenericResponse.getSuccessResponse(appointments);
         } catch (InvalidSessionException | UnauthorizedException e) {
             e.printStackTrace();
